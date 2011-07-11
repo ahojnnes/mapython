@@ -189,7 +189,7 @@ def generate_char_geoms(
     ctx_pango,
     text,
     font_desc,
-    spacing=0.5,
+    spacing=0.7,
     space_width=3
 ):
     '''
@@ -238,7 +238,7 @@ def generate_char_geoms(
     ctx.restore()
     return geoms
     
-def iter_chars_on_line(chars, line, start_len, step=0.8):
+def iter_chars_on_line(chars, line, start_len, step=0.85):
     '''
     Yields single character geometries placed on line.
     
