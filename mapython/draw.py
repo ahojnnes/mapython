@@ -374,7 +374,10 @@ class Map(object):
         layout = self.ctx_pango.create_layout()
         layout.set_font_description(font_desc)
         layout.set_text(text)
-        width, height = layout.get_pixel_size()
+        logical_extents, ink_extents = layout.get_pixel_extents()
+        width = logical_extents[2] - logical_extents[0]
+        height = logical_extents[3] - logical_extents[1]
+        layout_height = ink_extents[3] - ink_extents[1]
         self.ctx.new_path()
         #: make sure line does not intersect other conflict objects
         line = LineString(coords)
@@ -406,7 +409,8 @@ class Map(object):
         if coords[-1][0] < coords[0][0]:
             coords = tuple(reversed(coords))
         # translate linestring so text is rendered vertically in the middle
-        coords = utils.linestring_translate_perpendicular(coords, -height / 2.)
+        coords = utils.linestring_translate_perpendicular(coords,
+            - layout_height / 2. - logical_extents[1] / 2.)
         line = LineString(tuple(coords))
         # make sure text is rendered centered on line
         start_len = (line.length - width) / 2.
