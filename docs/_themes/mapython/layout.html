@@ -1,0 +1,20 @@
+{%- extends "basic/layout.html" %}
+{%- block header %}
+<a class="logo" href="http://mapython.org/">
+    <img src="{{ pathto('_static/images/logo.png', 1) }}" alt="" />
+    <h1>mapython</h1>
+    <small>Python mapping toolkit</small>
+    <div class="clear"></div>
+</a>
+<div class="clear"></div>
+{% endblock %}
+
+{#- do not display sidebars #}
+{%- block sidebar2 %}{% endblock %}
+
+{%- block footer %}
+    <div class="footer">
+        &copy; Copyright 2011 by Johannes Schönberger.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div>
+{%- endblock %}

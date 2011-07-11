@@ -1,0 +1,126 @@
+@import url("basic.css");
+
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Georgia", serif;
+    font-size: 15px;
+    color: #373737;
+    width: 700px;
+    margin: 20px auto;
+}
+h1, h2, h3, h4, h5 {
+    font-size: 28px;
+    font-weight: normal;
+    font-family: "Garamond", "Georgia", serif;
+    margin: 20px 0 10px 0;
+}
+    h2 {
+        font-size: 22px;
+    }
+    h3 {
+        font-size: 20px;
+    }
+    h4 {
+        font-size: 18px;
+    }
+    h5 {
+        font-size: 16px;
+    }
+a {
+    color: #00506c;
+    text-decoration: underline;
+}
+    a:hover {
+        color: #a2230d;
+    }
+p {
+    margin-bottom: 10px; 
+    line-height:20px;
+}
+pre {
+    font-family: "Consolas", "Monaco", "Deja Vu Sans Mono", monospace;
+    background: #f1f1f1;
+    padding: 5px 10px;
+    color: #000;
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+    pre .sec {
+        color:#888;
+    }
+ul, ol {
+    padding: 0 0 0 20px;
+    margin-bottom: 10px;
+}
+.clear {
+    clear:both;
+    font-size:0;
+    height:0;
+    line-height:0;
+}
+.logo {
+    text-decoration: none;
+    color: #000;
+}
+    .logo img {
+        float: left;
+        margin:10px 20px 0 0;
+    }
+    .logo h1 {
+        font-size: 40px;
+        line-height:40px;
+        font-family: "Georgia", serif;
+        margin: 0;
+    }
+    .logo small {
+        line-height:20px;
+        font-size: 12px;
+    }
+.navi {
+    margin: 20px 0;
+    list-style-type: none;
+    height: 20px;
+    font-style: italic;
+    font-size: 16px;
+}
+    .navi li {
+        display: inline;
+        text-transform: lowercase;
+        line-height: 20px;
+    }
+    .navi li a {
+        float: left;
+    }
+    .navi li:before {
+        content: "●";
+        font-size: 10px;
+        padding: 0 5px;
+        float: left;
+    }
+    .navi li:first-child:before {
+        content: "";
+    }
+.footer {
+    margin-top: 50px;
+    font-size: 12px;
+    margin-bottom: 50px;
+}
+
+/* sphinx */
+.headerlink {
+    margin-left: 10px;
+    text-decoration: none;
+}
+#searchbox {
+    visibility: hidden;
+}
+div.related {
+    margin-top: 20px;
+}
+div.related ul {
+    padding: 0;
+    margin: 0;
+}
