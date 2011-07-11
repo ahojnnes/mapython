@@ -6,9 +6,11 @@ Dependencies
 ============
 
 * pycairo
+* pango
+* pangocairo
+* numpy
 * shapely
 * geoalchemy
-* sqlalchemy
 * pyproj
 * pyyaml
 
