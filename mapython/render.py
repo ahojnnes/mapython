@@ -1,15 +1,12 @@
 # coding: utf-8
 import os
-import sys
 import math
 import functools
 import collections
 import cairo
 import numpy
 from sqlalchemy import and_
-from sqlalchemy.exc import InternalError
 from shapely import wkb
-from shapely.geometry import box
 from shapely.ops import linemerge
 import utils
 from database import session, OSMPoint, OSMLine, OSMPolygon

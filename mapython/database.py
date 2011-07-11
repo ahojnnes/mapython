@@ -1,7 +1,6 @@
 # coding: utf-8
 import os
-from sqlalchemy import create_engine, MetaData, Column, Integer, Unicode, \
-    DateTime, String, Float
+from sqlalchemy import create_engine, MetaData, Column, Integer, String, Float
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import geoalchemy

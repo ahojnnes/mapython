@@ -3,7 +3,6 @@ import math
 import cairo
 import pango
 import pangocairo
-import numpy
 from shapely.geometry import Point, LineString, Polygon, box
 import projection
 import utils
