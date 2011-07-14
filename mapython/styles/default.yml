@@ -30,8 +30,8 @@ POINT:
                 text-color: 0 0 0
                 font-size: 9
                 font-weight: bold
-                text-border-color: 1 1 1 0.88
-                text-border-width: 1.5
+                text-halo-color: 1 1 1 0.88
+                text-halo-width: 1.5
                 z-index: 99
             - 6-10:
                 font-size: 9
@@ -42,8 +42,8 @@ POINT:
                 text: name
                 text-color: 0.1 0.1 0.1
                 font-size: 8
-                text-border-color: 1 1 1 0.88
-                text-border-width: 1.5
+                text-halo-color: 1 1 1 0.88
+                text-halo-width: 1.5
                 z-index: 98
             - 4-6:
                 font-weight: bold
@@ -58,8 +58,8 @@ POINT:
                 text-color: 0.5 0.5 0.5
                 font-size: 8
                 font-weight: bold
-                text-border-color: 1 1 1 0.88
-                text-border-width: 1.5
+                text-halo-color: 1 1 1 0.88
+                text-halo-width: 1.5
             - 0-2:
                 font-size: 9
                 text-transform: uppercase
@@ -69,8 +69,8 @@ POINT:
             - 0-6:
                 text: name
                 text-color: 0.5 0.5 0.5
-                text-border-color: 1 1 1 0.88
-                text-border-width: 1.5
+                text-halo-color: 1 1 1 0.88
+                text-halo-width: 1.5
                 font-size: 8
                 font-weight: bold
             - 2:
@@ -81,8 +81,8 @@ POINT:
             - 0-3:
                 text: name
                 text-color: 0.5 0.5 0.5
-                text-border-color: 1 1 1 0.88
-                text-border-width: 1.5
+                text-halo-color: 1 1 1 0.88
+                text-halo-width: 1.5
                 font-size: 8
                 font-weight: bold
             - 2:
@@ -93,16 +93,16 @@ POINT:
             - 0-3:
                 text: name
                 text-color: 0.2 0.2 0.2
-                text-border-color: 1 1 1 0.88
-                text-border-width: 1.5
+                text-halo-color: 1 1 1 0.88
+                text-halo-width: 1.5
                 font-size: 8
                 z-index: 93
         islet:
             - 0, 1, 2:
                 text: name
                 text-color: 0.2 0.2 0.2
-                text-border-color: 1 1 1 0.88
-                text-border-width: 1.5
+                text-halo-color: 1 1 1 0.88
+                text-halo-width: 1.5
                 font-size: 7
                 z-index: 92
                 
@@ -162,8 +162,8 @@ LINE:
                 font-size: 8
                 text: name
                 text-color: 0.15 0.15 0.15
-                text-border-width: 1
-                text-border-color: 1 1 1 0.8
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.8
             - 0, 1:
                 font-size: 10
                 width: 7
@@ -189,8 +189,8 @@ LINE:
                 font-size: 8
                 text: name
                 text-color: 0.15 0.15 0.15
-                text-border-width: 1
-                text-border-color: 1 1 1 0.8
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.8
             - 0, 1:
                 font-size: 10
                 width: 7
@@ -211,8 +211,8 @@ LINE:
                 font-size: 8
                 text: name
                 text-color: 0.15 0.15 0.15
-                text-border-width: 1
-                text-border-color: 1 1 1 0.8
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.8
             - 0-3:
                 width: 3
                 border-width: 1
@@ -231,8 +231,8 @@ LINE:
                 width: 1.5
                 text: name
                 text-color: 0.15 0.15 0.15
-                text-border-width: 1
-                text-border-color: 1 1 1 0.8
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.8
                 font-size: 8
                 color: 1 1 1
                 border-width: 1
@@ -260,8 +260,8 @@ LINE:
                 font-size: 8
                 text: name
                 text-color: 0.15 0.15 0.15
-                text-border-width: 1
-                text-border-color: 1 1 1 0.8
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.8
             - 0, 1:
                 width: 4
                 border-width: 1.5
@@ -283,8 +283,8 @@ LINE:
                 font-size: 8
                 text: name
                 text-color: 0.15 0.15 0.15
-                text-border-width: 1
-                text-border-color: 1 1 1 0.8
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.8
             - 0, 1:
                 width: 4
                 border-width: 1.5
@@ -307,8 +307,8 @@ LINE:
                 font-size: 9
                 text: name
                 text-color: 0.15 0.15 0.15
-                text-border-width: 1
-                text-border-color: 1 1 1 0.8
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.8
             - 0:
                 width: 3
                 
@@ -339,8 +339,8 @@ LINE:
                 font-style: italic
                 text: name
                 text-color: 0.23 0.38 0.51
-                text-border-width: 1
-                text-border-color: 1 1 1 0.7
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.7
             - 0, 1:
                 width: 4
                 font-size: 9
@@ -355,8 +355,8 @@ LINE:
                 font-style: italic
                 text: name
                 text-color: 0.23 0.38 0.51
-                text-border-width: 1
-                text-border-color: 1 1 1 0.7
+                text-halo-width: 1
+                text-halo-color: 1 1 1 0.7
                 
     boundary:
         administrative[admin_level=1]:

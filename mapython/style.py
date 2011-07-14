@@ -65,15 +65,15 @@ def parse_attrs(attrs):
     new_attrs = {}
     for key, value in attrs.iteritems():
         if 'color' in key or key in ('line-dash', 'border-line-dash',
-            'outline-line-dash', 'text-border-line-dash'
+            'outline-line-dash', 'text-halo-line-dash'
         ):
             value = parse_tuple(value)
         elif key in ('line-cap', 'border-line-cap', 'outline-line-cap',
-            'text-border-line-cap'
+            'text-halo-line-cap'
         ):
             value = LINE_CAP.get(value, value)
         elif key in ('line-join', 'border-line-join', 'outline-line-join',
-            'text-border-line-join'
+            'text-halo-line-join'
         ):
             value = LINE_JOIN.get(value, value)
         new_attrs[key] = value

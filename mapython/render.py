@@ -45,13 +45,14 @@ class Renderer(object):
         self.quiet = quiet
         self.conflict_list = []
         #: add a buffer of 0.05 % around actual bbox so every element
-        #: is rendered - e.g. if it actually is outside of bbox but its width is
-        #: big enough to intersect the visible map
+        #: is queried from database - e.g. if an element is actually outside
+        #: of bbox but its visible extents are big enough to intersect
+        #: the visible map
         minx, miny, maxx, maxy = self.mapobj.bbox.bounds
         diffx = maxx - minx
         diffy = maxy - miny
         dilation = 0.0005 * math.sqrt(diffx ** 2 + diffy ** 2)
-        self.bbox = self.mapobj.bbox.buffer(dilation, 1)
+        self.bbox = self.mapobj.bbox.buffer(dilation)
         self.verbose_print(
             'Zoomlevel:',
             self.stylesheet.get_level(self.mapobj.scale)
@@ -265,14 +266,14 @@ class Renderer(object):
                     font_stretch_style=obj.style.get('font-stretch-style',
                         'normal'),
                     font_weight=obj.style.get('font-weight', 'normal'),
-                    text_border_width=obj.style.get('text-border-width', 1.5),
-                    text_border_color=obj.style.get('text-border-color',
+                    text_halo_width=obj.style.get('text-halo-width', 1.5),
+                    text_halo_color=obj.style.get('text-halo-color',
                         (0, 0, 0, 0)),
-                    text_border_line_cap=obj.style.get('text-border-line-cap',
+                    text_halo_line_cap=obj.style.get('text-halo-line-cap',
                         cairo.LINE_CAP_ROUND),
-                    text_border_line_join=obj.style.get('text-border-line-join',
+                    text_halo_line_join=obj.style.get('text-halo-line-join',
                         cairo.LINE_JOIN_ROUND),
-                    text_border_line_dash=obj.style.get('text-border-line-dash'),
+                    text_halo_line_dash=obj.style.get('text-halo-line-dash'),
                     text_transform=obj.style.get('text-transform'),
                 )
                 

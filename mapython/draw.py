@@ -30,8 +30,8 @@ class Map(object):
         'ps': cairo.PSSurface,
         'svg': cairo.SVGSurface,
     }
+    # margin around conflicting objects that may not overlap (text, icons etc.)
     CONFLICT_MARGIN = 3
-    TEXT_ON_LINE_DILATION = 1.33
     
     def __init__(
         self,
@@ -220,11 +220,11 @@ class Map(object):
             font_style='normal',
             font_stretch_style='normal',
             font_weight='normal',
-            text_border_width=3,
-            text_border_color=(1, 1, 1),
-            text_border_line_cap=cairo.LINE_CAP_ROUND,
-            text_border_line_join=cairo.LINE_JOIN_ROUND,
-            text_border_line_dash=None,
+            text_halo_width=3,
+            text_halo_color=(1, 1, 1),
+            text_halo_line_cap=cairo.LINE_CAP_ROUND,
+            text_halo_line_join=cairo.LINE_JOIN_ROUND,
+            text_halo_line_dash=None,
             text_transform=None,
             image=None,
             image_margin=4
@@ -240,11 +240,11 @@ class Map(object):
         :param font_family: font name
         :param font_style: one of :const:`cairo.FONT_SLANT_*`
         :param font_weight: one of :const:`cairo.FONT_WEIGHT_*`
-        :param text_border_width: border-width in unit (pixel/point)
-        :param text_border_color: ``(r, g, b[, a])``
-        :param text_border_line_cap: one of :const:`cairo.LINE_CAP_*`
-        :param text_border_line_join: one of :const:`cairo.LINE_JOIN_*`
-        :param text_border_line_dash: list/tuple used by
+        :param text_halo_width: border-width in unit (pixel/point)
+        :param text_halo_color: ``(r, g, b[, a])``
+        :param text_halo_line_cap: one of :const:`cairo.LINE_CAP_*`
+        :param text_halo_line_join: one of :const:`cairo.LINE_JOIN_*`
+        :param text_halo_line_dash: list/tuple used by
             :meth:`cairo.Context.set_dash`
         :param text_transform: one of ``'lowercase'``, ``'uppercase'`` or
             ``'capitalize'``
@@ -308,11 +308,11 @@ class Map(object):
         self.ctx_pango.layout_path(layout)
         #: draw white background behind name
         self.ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-        self.ctx.set_source_rgba(*text_border_color)
-        self.ctx.set_line_width(2 * text_border_width)
-        self.ctx.set_line_cap(text_border_line_cap)
-        self.ctx.set_line_join(text_border_line_join)
-        self.ctx.set_dash(text_border_line_dash or tuple())
+        self.ctx.set_source_rgba(*text_halo_color)
+        self.ctx.set_line_width(2 * text_halo_width)
+        self.ctx.set_line_cap(text_halo_line_cap)
+        self.ctx.set_line_join(text_halo_line_join)
+        self.ctx.set_dash(text_halo_line_dash or tuple())
         self.ctx.stroke_preserve()
         #: fill font line
         self.ctx.set_source_rgba(*color)
@@ -336,11 +336,11 @@ class Map(object):
             font_style='normal',
             font_stretch_style='normal',
             font_weight='normal',
-            text_border_width=1,
-            text_border_color=(1, 1, 1),
-            text_border_line_cap=cairo.LINE_CAP_ROUND,
-            text_border_line_join=cairo.LINE_JOIN_ROUND,
-            text_border_line_dash=None,
+            text_halo_width=1,
+            text_halo_color=(1, 1, 1),
+            text_halo_line_cap=cairo.LINE_CAP_ROUND,
+            text_halo_line_join=cairo.LINE_JOIN_ROUND,
+            text_halo_line_dash=None,
             text_transform=None,
         ):
         '''
@@ -354,11 +354,11 @@ class Map(object):
         :param font_family: font name
         :param font_style: one of :const:`cairo.FONT_SLANT_*`
         :param font_weight: one of :const:`cairo.FONT_WEIGHT_*`
-        :param text_border_width: border-width in unit (pixel/point)
-        :param text_border_color: ``(r, g, b[, a])``
-        :param text_border_line_cap: one of :const:`cairo.LINE_CAP_*`
-        :param text_border_line_join: one of :const:`cairo.LINE_JOIN_*`
-        :param text_border_line_dash: list/tuple used by
+        :param text_halo_width: border-width in unit (pixel/point)
+        :param text_halo_color: ``(r, g, b[, a])``
+        :param text_halo_line_cap: one of :const:`cairo.LINE_CAP_*`
+        :param text_halo_line_join: one of :const:`cairo.LINE_JOIN_*`
+        :param text_halo_line_dash: list/tuple used by
             :meth:`cairo.Context.set_dash`
         :param text_transform: one of ``'lowercase'``, ``'uppercase'`` or
             ``'capitalize'``
@@ -414,7 +414,7 @@ class Map(object):
         line = LineString(tuple(coords))
         # make sure text is rendered centered on line
         start_len = (line.length - width) / 2.
-        char_coord = None
+        char_coords = None
         chars = utils.generate_char_geoms(self.ctx, self.ctx_pango, text,
             font_desc)
         #: draw all character paths
@@ -422,20 +422,20 @@ class Map(object):
             for geom in char.geoms:
                 char_coords = iter(geom.coords)
                 self.ctx.move_to(*char_coords.next())
-                for char_coord in char_coords:
-                    self.ctx.line_to(*char_coord)
+                for lon, lat in char_coords:
+                    self.ctx.line_to(lon, lat)
                 self.ctx.close_path()
         #: only add line to reserved area if text was drawn
-        if char_coord is not None:
+        if char_coords is not None:
             covered = line.buffer(height + self.CONFLICT_MARGIN)
             self.conflict_area = self.conflict_area.union(covered)
         #: draw border around characters
         self.ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-        self.ctx.set_source_rgba(*text_border_color)
-        self.ctx.set_line_width(2 * text_border_width)
-        self.ctx.set_line_cap(text_border_line_cap)
-        self.ctx.set_line_join(text_border_line_join)
-        self.ctx.set_dash(text_border_line_dash or tuple())
+        self.ctx.set_source_rgba(*text_halo_color)
+        self.ctx.set_line_width(2 * text_halo_width)
+        self.ctx.set_line_cap(text_halo_line_cap)
+        self.ctx.set_line_join(text_halo_line_join)
+        self.ctx.set_dash(text_halo_line_dash or tuple())
         self.ctx.stroke_preserve()
         #: fill actual text
         self.ctx.set_source_rgba(*color)
@@ -455,11 +455,10 @@ class Map(object):
         # display centered
         x -= width / 2.0
         y -= height / 2.0
-        try:
-            newpos = self.find_free_position(
-                box(x - 2, y - 2, x + width + 2, y + height + 2)
-            )
-        except TypeError: # no free position found
+        newpos = self.find_free_position(
+            box(x - 2, y - 2, x + width + 2, y + height + 2)
+        )
+        if newpos is None:
             return
         self.ctx.set_source_surface(image, x, y)
         self.ctx.paint()
