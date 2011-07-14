@@ -105,8 +105,8 @@ Style definitions can only be overwritten within one tag condition:
                 - 0, 1, 2:
                     font-size: 20
                     font-weight: normal
-                    text-border-color: 1 1 1
-                    text-border-width: 2
+                    text-halo-color: 1 1 1
+                    text-halo-width: 2
 
 This is going to overwrite or add all definitions for zoom levels 0, 1 and 2.
 
@@ -127,8 +127,8 @@ Note that you can't overwrite complete tag styles, e.g. this does not work:
                 - 0, 1, 2:
                     font-size: 20
                     font-weight: normal
-                    text-border-color: 1 1 1
-                    text-border-width: 2
+                    text-halo-color: 1 1 1
+                    text-halo-width: 2
                     
 Define multiple conditions
 --------------------------
@@ -192,11 +192,11 @@ Available style attributes
 * points:
     * **text**: column name of text
     * **text-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
-    * **text-border-width**: int or float in pixel or point
-    * **text-border-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
-    * **text-border-line-cap**: butt, square, round
-    * **text-border-line-join**: miter, round, bevel
-    * **text-border-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
+    * **text-halo-width**: int or float in pixel or point
+    * **text-halo-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
+    * **text-halo-line-cap**: butt, square, round
+    * **text-halo-line-join**: miter, round, bevel
+    * **text-halo-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
     * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
@@ -224,11 +224,11 @@ Available style attributes
     * **outline-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text**: column name of text
     * **text-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
-    * **text-border-width**: int or float in pixel or point
-    * **text-border-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
-    * **text-border-line-cap**: butt, square, round
-    * **text-border-line-join**: miter, round, bevel
-    * **text-border-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
+    * **text-halo-width**: int or float in pixel or point
+    * **text-halo-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
+    * **text-halo-line-cap**: butt, square, round
+    * **text-halo-line-join**: miter, round, bevel
+    * **text-halo-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
     * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
@@ -247,11 +247,11 @@ Available style attributes
     * **border-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text**: column name of text
     * **text-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
-    * **text-border-width**: int or float in pixel or point
-    * **text-border-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
-    * **text-border-line-cap**: butt, square, round
-    * **text-border-line-join**: miter, round, bevel
-    * **text-border-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
+    * **text-halo-width**: int or float in pixel or point
+    * **text-halo-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
+    * **text-halo-line-cap**: butt, square, round
+    * **text-halo-line-join**: miter, round, bevel
+    * **text-halo-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
     * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
