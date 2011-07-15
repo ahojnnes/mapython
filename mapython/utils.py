@@ -3,7 +3,7 @@ import sys
 import math
 import cairo
 import itertools
-from shapely.geometry import LineString, MultiLineString
+from shapely.geometry import LineString, MultiLineString, Polygon
 
 
 def iter_pairs(iterable):
@@ -88,32 +88,7 @@ def linestring_lengths(coords):
     for dx, dy in coord_diffs(coords):
         yield math.sqrt(dx**2 + dy**2)
         
-def linestring_translate_perpendicular(coords, amount):
-    '''
-    Yields coordinates of linestring translated by a certain amount at each
-    node in perpendicular direction.
-    
-    :param coords: iterable in the form of ``((x1, y1), (x2, y2), ...)``
-    
-    :yields: (x, y) coordinate tuples
-    '''
-    
-    seg_rads = tuple(linestring_radians(coords))
-    #: calculate diffs of radians of each linestring segment
-    avgs = [seg_rads[0]]
-    for rad1, rad2 in iter_pairs(seg_rads):
-        if rad1 > 0 > rad2:
-            rad2 = - rad2
-        avgs.append((rad1 + rad2) / 2.0)
-    avgs.append(seg_rads[-1])
-    #: translate node coordinates by amount in perpendicular direction
-    for avg, coord in itertools.izip(avgs, coords):
-        # perpendicular angle at node
-        newx = coord[0] - math.sin(avg) * amount
-        newy = coord[1] + math.cos(avg) * amount
-        yield newx, newy
-        
-def linestring_char_radians(line, length, width, bearing=0.8):
+def linestring_char_radians(line, length, width, bearing=0.5):
     '''
     Determines radians of gradient of linestring.
 

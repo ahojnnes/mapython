@@ -141,6 +141,7 @@ if __name__ == '__main__':
     options = parse_options()
     if options is not None:
         os.environ['MAPYTHON_DB_URL'] = options.database
+        sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
         from mapython.projection import mercator
         from mapython.draw import Map
         from mapython.render import Renderer

@@ -125,8 +125,8 @@ class Map(object):
     def draw_line(
             self,
             coords,
-            color,
-            width,
+            color=(0, 0, 0),
+            width=1,
             line_cap=cairo.LINE_CAP_ROUND,
             line_join=cairo.LINE_JOIN_ROUND,
             line_dash=None
@@ -292,7 +292,7 @@ class Map(object):
         newx, newy = newpos
         # abort if new position is too far away from original position
         if Point(newx, newy).distance(Point(x, y)) > 0.1 * self.max_size:
-            self.context.new_path()
+            self.ctx.new_path()
             return
         if image is not None:
             #: include image
@@ -364,6 +364,9 @@ class Map(object):
             ``'capitalize'``
         '''
         
+        text = text.strip()
+        if not text:
+            return
         coords = map(lambda c: self.transform_coords(*c), coords)
         
         text = utils.text_transform(text, text_transform)
@@ -409,9 +412,10 @@ class Map(object):
         if coords[-1][0] < coords[0][0]:
             coords = tuple(reversed(coords))
         # translate linestring so text is rendered vertically in the middle
-        coords = utils.linestring_translate_perpendicular(coords,
-            - layout_height / 2. - logical_extents[1] / 2.)
         line = LineString(tuple(coords))
+        offset = layout_height / 2. + logical_extents[1] / 2.
+        line = line.parallel_offset(offset, 'right', resolution=3)
+        line = LineString(tuple(reversed(line.coords)))
         # make sure text is rendered centered on line
         start_len = (line.length - width) / 2.
         char_coords = None
@@ -427,7 +431,7 @@ class Map(object):
                 self.ctx.close_path()
         #: only add line to reserved area if text was drawn
         if char_coords is not None:
-            covered = line.buffer(height + self.CONFLICT_MARGIN)
+            covered = line.buffer(layout_height + self.CONFLICT_MARGIN)
             self.conflict_area = self.conflict_area.union(covered)
         #: draw border around characters
         self.ctx.set_line_cap(cairo.LINE_CAP_ROUND)
@@ -467,19 +471,31 @@ class Map(object):
             
     def transform_coords(self, lon, lat):
         '''
-        Translates from ``(lon, lat)`` to ``(x, y)`` in unit (pixel or point).
+        Transforms from ``(lon, lat)`` to ``(x, y)`` in unit (pixel or point).
         
         :param lon: longitude in degree
         :param lat: latitude in degree
+        
+        :returns: (x, y) tuple in unit (pixel or point)
         '''
         
-        # get absolute coords in metres on map, coord system centre is 
-        # (lon=0, lat=0) => (x=0, y=0)
         x, y = self.projection(lon, lat)
-        # relative coords, coord system centre is left upper corner of map
-        x_rel, y_rel = (x - self.x0, self.y0 - y)
-        # transform coords from metres to unit
+        x_rel, y_rel = x - self.x0, self.y0 - y
         return self.m2unit_matrix.transform_point(x_rel, y_rel)
+        
+    def transform_coords_inverse(self, x, y):
+        '''
+        Transforms from ``(x, y)`` in unit (pixel or point) to ``(lon, lat)``.
+        
+        :param x: in unit (pixel or point)
+        :param y: in unit (pixel or point)
+        
+        :returns: (lon, lat) tuple in degrees
+        '''
+        
+        x, y = self.unit2m_matrix.transform_point(x, y)
+        x_abs, y_abs = x + self.x0, self.y0 - y
+        return self.projection(x_abs, y_abs, inverse=True)
         
     def find_free_position(self, polygon, number=10, step=4):
         '''
