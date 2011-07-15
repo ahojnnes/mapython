@@ -2,8 +2,7 @@
 import sys
 import math
 import cairo
-import itertools
-from shapely.geometry import LineString, MultiLineString, Polygon
+from shapely.geometry import LineString, MultiLineString
 
 
 def iter_pairs(iterable):
@@ -169,7 +168,7 @@ def generate_char_geoms(
 ):
     '''
     Generates geometries for each character in text. Each character is placed
-    at (0, 0). Additionally the character width, height and spacing to
+    at (0, 0). Additionally the character width and spacing to
     previous character is determined.
     
     :param ctx: :class:`cairo.Context` object
@@ -179,7 +178,7 @@ def generate_char_geoms(
     :param spacing: spacing between characters as int or float
     :param space_width: width of one space character
     
-    :returns: list containing (geometry, width, height, spacing) tuples
+    :returns: list containing (geometry, width, spacing) tuples
     '''
     
     ctx.save()
@@ -206,8 +205,8 @@ def generate_char_geoms(
                 coords = []
             else: # cairo.PATH_MOVE_TO or cairo.PATH_LINE_TO
                 coords.append(point)
-        width, height = layout.get_pixel_size()
-        geoms.append((MultiLineString(paths), width, height, cur_spacing))
+        width = layout.get_pixel_size()[0]
+        geoms.append((MultiLineString(paths), width, cur_spacing))
         ctx.new_path()
         cur_spacing = spacing
     ctx.restore()
@@ -230,7 +229,7 @@ def iter_chars_on_line(chars, line, start_len, step=0.85):
     cur_len = max(start_len, 1)
     # geometry containing path of all rotated characters
     text_geom = LineString()
-    for char, width, height, spacing in chars:
+    for char, width, spacing in chars:
         cur_len += spacing
         last_rad = None
         for _ in xrange(30):

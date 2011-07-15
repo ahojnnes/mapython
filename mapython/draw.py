@@ -382,7 +382,6 @@ class Map(object):
         layout.set_text(text)
         logical_extents, ink_extents = layout.get_pixel_extents()
         width = logical_extents[2] - logical_extents[0]
-        height = logical_extents[3] - logical_extents[1]
         layout_height = ink_extents[3] - ink_extents[1]
         self.ctx.new_path()
         #: make sure line does not intersect other conflict objects
