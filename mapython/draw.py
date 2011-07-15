@@ -323,8 +323,11 @@ class Map(object):
         area = box(newx, newy + height, newx + width, newy)
         if image is not None:
             area = area.union(image_area.buffer(self.CONFLICT_MARGIN, 1))
-        self.conflict_area = self.conflict_area.union(
-            area.buffer(self.CONFLICT_MARGIN, 1))
+        try:
+            self.conflict_area = self.conflict_area.union(
+                area.buffer(self.CONFLICT_MARGIN, 1))
+        except ValueError: # Empty GeometryCollection
+            pass
         
     def draw_text_on_line(
             self,
@@ -384,7 +387,7 @@ class Map(object):
         self.ctx.new_path()
         #: make sure line does not intersect other conflict objects
         line = LineString(coords)
-        line = line.difference(self.map_area.exterior.buffer(height))
+        line = line.difference(self.map_area.exterior.buffer(layout_height))
         line = line.difference(self.conflict_area)
         #: check whether line is empty or is split into several different parts
         if line.geom_type == 'GeometryCollection':

@@ -394,8 +394,7 @@ POLYGON:
             - 0-3:
                 background-color: 0.87 0.86 0.83
                 z-index: 99
-            - 0:
-                text: addr_housenumber
+                
     landuse:
         allotments, brownfield, cemetery, commercial, construction, garages: &landuse_default
             - 0, 1, 2:
