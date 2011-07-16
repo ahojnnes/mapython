@@ -64,17 +64,11 @@ def parse_tag_value(tag, value):
 def parse_attrs(attrs):
     new_attrs = {}
     for key, value in attrs.iteritems():
-        if 'color' in key or key in ('line-dash', 'border-line-dash',
-            'outline-line-dash', 'text-halo-line-dash'
-        ):
+        if 'color' in key or 'line-dash' in key:
             value = parse_tuple(value)
-        elif key in ('line-cap', 'border-line-cap', 'outline-line-cap',
-            'text-halo-line-cap'
-        ):
+        elif 'line-cap' in key:
             value = LINE_CAP.get(value, value)
-        elif key in ('line-join', 'border-line-join', 'outline-line-join',
-            'text-halo-line-join'
-        ):
+        elif 'line-join' in key:
             value = LINE_JOIN.get(value, value)
         new_attrs[key] = value
     return new_attrs
