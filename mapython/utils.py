@@ -120,7 +120,7 @@ def linestring_char_radians(line, length, width, bearing=0.5):
     dy = point2.y - point1.y
     return math.atan2(dy, dx)
         
-def linestring_text_optimal_segment(coords, width, max_rad=7):
+def linestring_text_optimal_segment(coords, width, max_rad=4.5):
     '''
     Tries to find a segment of the linestring which has the least change in
     gradients and is in the middle of the linestring.

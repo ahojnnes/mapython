@@ -199,6 +199,7 @@ Available style attributes
     * **text-halo-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
+    * **font_variant**: normal, small-caps
     * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
     * **font-style**: normal, oblique, italic
     * **font-stretch-style**: ultra-condensed, extra-condensed, condensed,
@@ -231,6 +232,7 @@ Available style attributes
     * **text-halo-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
+    * **font_variant**: normal, small-caps
     * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
     * **font-style**: normal, oblique, italic
     * **font-stretch-style**: ultra-condensed, extra-condensed, condensed,
@@ -254,6 +256,7 @@ Available style attributes
     * **text-halo-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
+    * **font_variant**: normal, small-caps
     * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
     * **font-style**: normal, oblique, italic
     * **font-stretch-style**: ultra-condensed, extra-condensed, condensed,

@@ -268,7 +268,8 @@ class Renderer(object):
                     color=obj.style.get('text-color', (0, 0, 0)),
                     font_size=obj.style.get('font-size', 10),
                     font_family=obj.style.get('font-family',
-                        'Arial'),
+                        'Tahoma'),
+                    font_variant=obj.style.get('font-variant', 'normal'),
                     font_style=obj.style.get('font-style', 'normal'),
                     font_stretch_style=obj.style.get('font-stretch-style',
                         'normal'),
@@ -309,7 +310,7 @@ class Renderer(object):
             bbox_condition = BBOX_QUERY_COND % (
                 (db_class.__table__, ) + self.bbox.bounds)
             objects = session.query(
-                # only get necessary columns to save memory and reduce cpu usage
+                # only get necessary columns to increase performance
                 db_class.geom,
                 *[getattr(db_class, c) for c in tuple(tags) + tuple(columns)]
             ).filter(and_(bbox_condition, *conditions)).all()

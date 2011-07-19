@@ -220,7 +220,8 @@ class Map(object):
             text,
             color=(0, 0, 0),
             font_size=11,
-            font_family='Arial',
+            font_family='Tahoma',
+            font_variant='normal',
             font_style='normal',
             font_stretch_style='normal',
             font_weight='normal',
@@ -242,8 +243,12 @@ class Map(object):
         :param color: ``(r, g, b[, a])``
         :param font_size: font-size in unit (pixel/point)
         :param font_family: font name
-        :param font_style: one of :const:`cairo.FONT_SLANT_*`
-        :param font_weight: one of :const:`cairo.FONT_WEIGHT_*`
+        :param font_variant: normal, small-caps
+        :param font_style: normal, oblique, italic
+        :param font_stretch_style: ultra-condensed, extra-condensed, condensed,
+            semi-condensed, normal, semi-expanded, expanded, extra-expanded,
+            ultra-expanded
+        :param font_weight: ultra-light, light, normal, bold, ultra-bold, heavy
         :param text_halo_width: border-width in unit (pixel/point)
         :param text_halo_color: ``(r, g, b[, a])``
         :param text_halo_line_cap: one of :const:`cairo.LINE_CAP_*`
@@ -264,8 +269,8 @@ class Map(object):
         text = utils.text_transform(text, text_transform)
         layout = self.ctx_pango.create_layout()
         font_desc = pango.FontDescription(' '.join(
-            (font_family, font_weight, font_style, font_stretch_style,
-            str(font_size))
+            (font_family, font_weight, font_variant, font_style,
+            font_stretch_style, str(font_size))
         ))
         layout.set_font_description(font_desc)
         layout.set_text(text)
@@ -339,7 +344,8 @@ class Map(object):
             text,
             color=(0, 0, 0),
             font_size=10,
-            font_family='Arial',
+            font_family='Tahoma',
+            font_variant='normal',
             font_style='normal',
             font_stretch_style='normal',
             font_weight='normal',
@@ -359,8 +365,12 @@ class Map(object):
         :param color: ``(r, g, b[, a])``
         :param font_size: font-size in unit (pixel/point)
         :param font_family: font name
-        :param font_style: one of :const:`cairo.FONT_SLANT_*`
-        :param font_weight: one of :const:`cairo.FONT_WEIGHT_*`
+        :param font_variant: normal, small-caps
+        :param font_style: normal, oblique, italic
+        :param font_stretch_style: ultra-condensed, extra-condensed, condensed,
+            semi-condensed, normal, semi-expanded, expanded, extra-expanded,
+            ultra-expanded
+        :param font_weight: ultra-light, light, normal, bold, ultra-bold, heavy
         :param text_halo_width: border-width in unit (pixel/point)
         :param text_halo_color: ``(r, g, b[, a])``
         :param text_halo_line_cap: one of :const:`cairo.LINE_CAP_*`
@@ -378,8 +388,8 @@ class Map(object):
         
         text = utils.text_transform(text, text_transform)
         font_desc = pango.FontDescription(' '.join(
-            (font_family, font_weight, font_style, font_stretch_style,
-            str(font_size))
+            (font_family, font_weight, font_variant, font_style,
+            font_stretch_style, str(font_size))
         ))
         layout = self.ctx_pango.create_layout()
         layout.set_font_description(font_desc)
