@@ -22,6 +22,7 @@ GEOM_TYPES = {
 COLUMN_ATTRS = ('text', )
 DEFAULT_STYLE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
     'styles/default.yml')
+BBOX_QUERY_COND = "(%s.way && SetSRID('BOX3D(%s %s, %s %s)'::box3d, 4326))"
 
 
 class Renderer(object):
@@ -92,13 +93,12 @@ class Renderer(object):
             the area actually is no land mass
         '''
         
-        
         coastlines = session.query(OSMLine).filter(and_(
-            bbox_condition % ((OSMLine.__table__, ) + self.bbox.bounds),
+            BBOX_QUERY_COND % ((OSMLine.__table__, ) + self.bbox.bounds),
             OSMLine.natural=='coastline'
         )).all()
         coastpolygons = session.query(OSMPolygon).filter(and_(
-            bbox_condition % ((OSMPolygon.__table__, ) + self.bbox.bounds),
+            BBOX_QUERY_COND % ((OSMPolygon.__table__, ) + self.bbox.bounds),
             OSMPolygon.natural=='coastline'
         )).all()
         # only fill map with sea color if there is a at least one coastline
@@ -306,9 +306,8 @@ class Renderer(object):
             # simple st_intersects() does not work because this operation
             # raises an InternalError exception because of invalid geometries
             # in the OSM database
-            bbox_condition = """
-                (%s.way && SetSRID('BOX3D(%s %s, %s %s)'::box3d, 4326))
-            """ % ((db_class.__table__, ) + self.bbox.bounds)
+            bbox_condition = BBOX_QUERY_COND % (
+                (db_class.__table__, ) + self.bbox.bounds)
             objects = session.query(
                 # only get necessary columns to save memory and reduce cpu usage
                 db_class.geom,
