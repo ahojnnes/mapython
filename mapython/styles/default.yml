@@ -165,7 +165,7 @@ LINE:
                 text-halo-width: 1
                 text-halo-color: 1 1 1 0.8
             - 0, 1:
-                font-size: 10
+                font-size: 9
                 width: 7
                 border-width: 1.5
             - 0:
@@ -192,7 +192,7 @@ LINE:
                 text-halo-width: 1
                 text-halo-color: 1 1 1 0.8
             - 0, 1:
-                font-size: 10
+                font-size: 9
                 width: 7
                 border-width: 1.5
             - 0:
@@ -217,7 +217,7 @@ LINE:
                 width: 3
                 border-width: 1
             - 0, 1:
-                font-size: 10
+                font-size: 9
                 width: 4
                 border-width: 1.5
             - 0:
@@ -240,7 +240,7 @@ LINE:
             - 2:
                 z-index: 95
             - 0, 1:
-                font-size: 10
+                font-size: 9
                 width: 4
                 border-width: 1.5
             - 0:
@@ -265,7 +265,7 @@ LINE:
             - 0, 1:
                 width: 4
                 border-width: 1.5
-                font-size: 10
+                font-size: 9
             - 0:
                 width: 6
         residential, living_street, service:
@@ -288,7 +288,7 @@ LINE:
             - 0, 1:
                 width: 4
                 border-width: 1.5
-                font-size: 10
+                font-size: 9
             - 0:
                 width: 6
         track, pedestrian, raceway, services, bus_guidewaypath, cycleway, footway, bridleway, steps:
@@ -304,7 +304,7 @@ LINE:
             - 0, 1:
                 width: 2
                 border-width: 1
-                font-size: 9
+                font-size: 8
                 text: name
                 text-color: 0.15 0.15 0.15
                 text-halo-width: 1

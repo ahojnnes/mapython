@@ -60,8 +60,16 @@ class Renderer(object):
                 
     def run(self):
         '''
-        Runs all rendering methods in the correct order and draws a complete
-        map.
+        Runs all rendering processes and draws the different layers in the
+        correct order:
+        
+            0. map background
+            1. coastlines
+            2. polygons
+            3. lines
+            4. points
+            5. conflicts (text, images etc.)
+            
         '''
         self.mapobj.draw_background(self.stylesheet.map_background)
         self.coastlines()
@@ -77,11 +85,14 @@ class Renderer(object):
             print
         
     def coastlines(self):
-        '''Draws coastlines on the map.'''
+        '''
+        Draws coastlines on the map.
         
-        bbox_condition = """
-            (%s.way && SetSRID('BOX3D(%s %s, %s %s)'::box3d, 4326))
-        """
+        TODO: fill map with sea color if no coastline intersects the map but
+            the area actually is no land mass
+        '''
+        
+        
         coastlines = session.query(OSMLine).filter(and_(
             bbox_condition % ((OSMLine.__table__, ) + self.bbox.bounds),
             OSMLine.natural=='coastline'
@@ -90,29 +101,25 @@ class Renderer(object):
             bbox_condition % ((OSMPolygon.__table__, ) + self.bbox.bounds),
             OSMPolygon.natural=='coastline'
         )).all()
+        # only fill map with sea color if there is a at least one coastline
         if coastlines or coastpolygons:
-            #: fill whole map with sea color
+            # fill whole map with sea color
             self.mapobj.draw_background(self.stylesheet.sea_color)
-            #: merge OSMLine's
-            lines = []
-            for cl in coastlines:
-                lines.append(wkb.loads(str(cl.geom.geom_wkb)))
-            merged = linemerge(lines)
-            if merged.geom_type == 'LineString':
-                merged = (merged, )
-            else: # MultiLineString
-                merged = tuple(merged)
-            #: draw merged OSMLine's
-            for cl in merged:
+            # 
+            lines = tuple(wkb.loads(str(cl.geom.geom_wkb))
+                for cl in coastlines)
+            #: save all polygon coordinates as numpy arrays
+            polygons = []
+            for cp in coastpolygons:
+                polygons.append(
+                    numpy.array(wkb.loads(str(cp.geom.geom_wkb)).exterior))
+            for cl in utils.close_coastlines(lines, self.bbox):
+                polygons.append(numpy.array(cl.coords))
+            #: fill land filled area with map background
+            for coords in polygons:
                 self.mapobj.draw_polygon(
-                    numpy.array(cl),
-                    self.stylesheet.map_background
-                )
-            #: draw OSMPolygon's
-            for cl in coastpolygons:
-                self.mapobj.draw_polygon(
-                    numpy.array(wkb.loads(str(cl.geom.geom_wkb)).exterior),
-                    self.stylesheet.map_background
+                    exterior=coords,
+                    background_color=self.stylesheet.map_background
                 )
 
     def polygons(self):
@@ -261,7 +268,7 @@ class Renderer(object):
                     color=obj.style.get('text-color', (0, 0, 0)),
                     font_size=obj.style.get('font-size', 10),
                     font_family=obj.style.get('font-family',
-                        'Tahoma'),
+                        'Arial'),
                     font_style=obj.style.get('font-style', 'normal'),
                     font_stretch_style=obj.style.get('font-stretch-style',
                         'normal'),

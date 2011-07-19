@@ -3,6 +3,7 @@ import math
 import cairo
 import pango
 import pangocairo
+import numpy
 from shapely.geometry import Point, LineString, Polygon, box
 import projection
 import utils
@@ -160,7 +161,7 @@ class Map(object):
     def draw_polygon(
             self, 
             exterior,
-            interiors=(),
+            interiors=None,
             background_color=(0, 0, 0, 0),
             background_image=None,
             border_width=0,
@@ -185,7 +186,10 @@ class Map(object):
         :param border_line_dash: list/tuple used by :meth:`cairo.Context.set_dash`
         '''
         
-        for coords in (exterior, ) + interiors:
+        polygons = (exterior, )
+        if interiors is not None:
+            polygons += interiors
+        for coords in polygons:
             #: move to first coords
             x, y = self.transform_coords(*coords[0])
             self.ctx.move_to(x, y)
@@ -216,7 +220,7 @@ class Map(object):
             text,
             color=(0, 0, 0),
             font_size=11,
-            font_family='Tahoma',
+            font_family='Arial',
             font_style='normal',
             font_stretch_style='normal',
             font_weight='normal',
@@ -316,8 +320,8 @@ class Map(object):
         self.ctx.stroke_preserve()
         #: fill font line
         self.ctx.set_source_rgba(*color)
-        # not using ctx_pango.show_layout because text is not rendered equally
-        # in all output formats
+        # not using ctx_pango.show_layout because text halo is not rendered
+        # correctly
         self.ctx.fill()
         #: add text area to conflict_area
         area = box(newx, newy + height, newx + width, newy)
@@ -335,7 +339,7 @@ class Map(object):
             text,
             color=(0, 0, 0),
             font_size=10,
-            font_family='Tahoma',
+            font_family='Arial',
             font_style='normal',
             font_stretch_style='normal',
             font_weight='normal',
