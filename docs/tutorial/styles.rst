@@ -200,11 +200,8 @@ Available style attributes
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
     * **font_variant**: normal, small-caps
-    * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
+    * **font-weight**: normal, bold
     * **font-style**: normal, oblique, italic
-    * **font-stretch-style**: ultra-condensed, extra-condensed, condensed,
-        semi-condensed, normal, semi-expanded, expanded, extra-expanded,
-        ultra-expanded
     * **image**: relative path to image file
     * **z-index**: int
 * lines:
@@ -232,12 +229,8 @@ Available style attributes
     * **text-halo-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
-    * **font_variant**: normal, small-caps
-    * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
+    * **font-weight**: normal, bold
     * **font-style**: normal, oblique, italic
-    * **font-stretch-style**: ultra-condensed, extra-condensed, condensed,
-        semi-condensed, normal, semi-expanded, expanded, extra-expanded,
-        ultra-expanded
     * **z-index**: int
 * polygons:
     * **background-color**: rga[a] (e.g. 0 0 0 or 0 0 0 1)
@@ -256,9 +249,6 @@ Available style attributes
     * **text-halo-line-dash**: tuple (e.g. 1 or 1 2 or 2.3 2 1)
     * **text-transform**: uppercase, lowercase, capitalize
     * **font-size**: int or float in pixel or point
-    * **font_variant**: normal, small-caps
-    * **font-weight**: ultra-light, light, normal, bold, ultra-bold, heavy
+    * **font-weight**: normal, bold
     * **font-style**: normal, oblique, italic
-    * **font-stretch-style**: ultra-condensed, extra-condensed, condensed,
-        semi-condensed, normal, semi-expanded, expanded, extra-expanded,
-        ultra-expanded
+    * **z-index**: int
