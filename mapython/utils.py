@@ -173,14 +173,7 @@ def linestring_text_optimal_segment(coords, width, max_rad=4.5):
             midmost = (start, end)
     return midmost
     
-def generate_char_geoms(
-    ctx,
-    ctx_pango,
-    text,
-    font_desc,
-    spacing=0.8,
-    space_width=3
-):
+def generate_char_geoms(ctx, text, spacing=0.8, space_width=3):
     '''
     Generates geometries for each character in text. Each character is placed
     at (0, 0). Additionally the character width and spacing to
@@ -197,9 +190,6 @@ def generate_char_geoms(
     '''
     
     ctx.save()
-    #: create pango layout and init font settings
-    layout = ctx_pango.create_layout()
-    layout.set_font_description(font_desc)
     # list containing geometries and info for each character as a tuple:
     # (geometry, width, height, spacing)
     geoms = []
@@ -210,8 +200,8 @@ def generate_char_geoms(
             cur_spacing += space_width
             continue
         #: get path of current character
-        layout.set_text(char)
-        ctx_pango.layout_path(layout)
+        ctx.move_to(0, 0)
+        ctx.text_path(char)
         paths = []
         coords = []
         for path_type, point in ctx.copy_path_flat():
@@ -220,7 +210,7 @@ def generate_char_geoms(
                 coords = []
             else: # cairo.PATH_MOVE_TO or cairo.PATH_LINE_TO
                 coords.append(point)
-        width = layout.get_pixel_size()[0]
+        width = ctx.text_extents(char)[2]
         geoms.append((MultiLineString(paths), width, cur_spacing))
         ctx.new_path()
         cur_spacing = spacing
@@ -263,7 +253,10 @@ def iter_chars_on_line(chars, line, start_len, step=0.85):
             rot = MultiLineString(tuple(coords))
             cur_len += step
             # check whether distance to previous characters is long enough
-            if text_geom.distance(rot) > spacing:
+            if (
+                text_geom.distance(rot) > spacing
+                or text_geom.geom_type == 'GeometryCollection'
+            ):
                 text_geom = text_geom.union(rot)
                 yield rot
                 break

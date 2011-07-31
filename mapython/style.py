@@ -8,6 +8,15 @@ import cairo
 import utils
 
 
+FONT_WEIGHT = {
+    'normal': cairo.FONT_WEIGHT_NORMAL,
+    'bold': cairo.FONT_WEIGHT_BOLD,
+}
+FONT_STYLE = {
+    'normal': cairo.FONT_SLANT_NORMAL,
+    'italic': cairo.FONT_SLANT_ITALIC,
+    'oblique': cairo.FONT_SLANT_OBLIQUE,
+}
 LINE_CAP = {
     'butt': cairo.LINE_CAP_BUTT,
     'round': cairo.LINE_CAP_ROUND,
@@ -66,6 +75,10 @@ def parse_attrs(attrs):
     for key, value in attrs.iteritems():
         if 'color' in key or 'line-dash' in key:
             value = parse_tuple(value)
+        elif key == 'font-weight':
+            value = FONT_WEIGHT.get(value, value)
+        elif key == 'font-style':
+            value = FONT_STYLE.get(value, value)
         elif 'line-cap' in key:
             value = LINE_CAP.get(value, value)
         elif 'line-join' in key:

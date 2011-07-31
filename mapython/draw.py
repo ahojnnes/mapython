@@ -1,8 +1,6 @@
 # coding: utf-8
 import math
 import cairo
-import pango
-import pangocairo
 import numpy
 from shapely.geometry import Point, LineString, Polygon, box
 import projection
@@ -56,7 +54,6 @@ class Map(object):
         # inits: self.m2unit_matrix, self.unit2m_matrix, self.scale
         self._init_transformation()
         self.ctx = cairo.Context(self.surface)
-        self.ctx_pango = pangocairo.CairoContext(self.ctx)
         self.map_area = box(0, 0, self.width, self.height)
         self.conflict_area = Polygon(
             # buffer around map where no text should be drawn
@@ -221,10 +218,8 @@ class Map(object):
             color=(0, 0, 0),
             font_size=11,
             font_family='Tahoma',
-            font_variant='normal',
-            font_style='normal',
-            font_stretch_style='normal',
-            font_weight='normal',
+            font_style=cairo.FONT_SLANT_NORMAL,
+            font_weight=cairo.FONT_WEIGHT_NORMAL,
             text_halo_width=3,
             text_halo_color=(1, 1, 1),
             text_halo_line_cap=cairo.LINE_CAP_ROUND,
@@ -243,11 +238,7 @@ class Map(object):
         :param color: ``(r, g, b[, a])``
         :param font_size: font-size in unit (pixel/point)
         :param font_family: font name
-        :param font_variant: normal, small-caps
         :param font_style: normal, oblique, italic
-        :param font_stretch_style: ultra-condensed, extra-condensed, condensed,
-            semi-condensed, normal, semi-expanded, expanded, extra-expanded,
-            ultra-expanded
         :param font_weight: ultra-light, light, normal, bold, ultra-bold, heavy
         :param text_halo_width: border-width in unit (pixel/point)
         :param text_halo_color: ``(r, g, b[, a])``
@@ -262,60 +253,52 @@ class Map(object):
         '''
         
         x, y = self.transform_coords(*coord)
-        # abort if there are already too many texts in this area
+        # abort if there are already too many text_paths in this area
         if self.conflict_density(x, y) > 1:
             self.ctx.new_path()
             return
         text = utils.text_transform(text, text_transform)
-        layout = self.ctx_pango.create_layout()
-        font_desc = pango.FontDescription(' '.join(
-            (font_family, font_weight, font_variant, font_style,
-            font_stretch_style, str(font_size))
-        ))
-        layout.set_font_description(font_desc)
-        layout.set_text(text)
-        width, height = layout.get_pixel_size()
-        # place text vertically centered
-        y -= height / 2.0
+        #: draw spot name
+        self.ctx.select_font_face(font_family, font_style, font_weight)
+        self.ctx.set_font_size(font_size)
+        width, height = self.ctx.text_extents(text)[2:4]
         if image is not None:
-            #: if image is used it is centered on x, y and text is placed
-            #: right next to it
             image = cairo.ImageSurface.create_from_png(image)
             image_width, image_height = image.get_width(), image.get_height()
-            # place text right next to the image
             text_area = box(
                 x - image_width / 2.0,
-                y,
+                y - max(height, image_height) / 2.0,
                 x + image_width + width + image_margin,
                 y + max(height, image_height) / 2.0
             )
         else:
-            #: place text horizontally centered
+            # place text directly on coord
             x -= width / 2.0
-            text_area = box(x, y + height, x + width, y)
-        newpos = self.find_free_position(text_area)
-        # abort if no free position is found
-        if newpos is None:
-            self.ctx.new_path()
-            return
-        newx, newy = newpos
-        # abort if new position is too far away from original position
-        if Point(newx, newy).distance(Point(x, y)) > 0.1 * self.max_size:
+            text_area = box(x - 2, y - height - 2, x + 2 + width, y + 2)
+        try:
+            newx, newy = self.find_free_position(text_area)
+        except TypeError: # no free position found
             self.ctx.new_path()
             return
         if image is not None:
-            #: include image
             y = newy + (max(height, image_height) - image_height) / 2.0
             self.ctx.set_source_surface(image, newx, y)
             self.ctx.paint()
             image_area = box(x, y, x + image_width, y + image_height)
             newx += image_width + image_margin
             newy += (image_height + height) / 2.0
-        # using integer value because otherwise the text will be blurry
+        else:
+            # find_free_position uses minx and miny as position but 
+            # cairo uses bottom left corner
+            newx, newy = newx, newy + height
+        # abort if new position is too far away from original position
+        if Point(newx, newy).distance(Point(x, y)) > 0.1 * self.max_size:
+            self.ctx.new_path()
+            return
+        # round positions for clear text rendering
         self.ctx.move_to(int(newx), int(newy))
-        # copy pango path to cairo context
-        self.ctx_pango.layout_path(layout)
-        #: draw white background behind name
+        self.ctx.text_path(text)
+        #: draw text halo
         self.ctx.set_line_cap(cairo.LINE_CAP_ROUND)
         self.ctx.set_source_rgba(*text_halo_color)
         self.ctx.set_line_width(2 * text_halo_width)
@@ -323,20 +306,18 @@ class Map(object):
         self.ctx.set_line_join(text_halo_line_join)
         self.ctx.set_dash(text_halo_line_dash or tuple())
         self.ctx.stroke_preserve()
-        #: fill font line
-        self.ctx.set_source_rgba(*color)
-        # not using ctx_pango.show_layout because text halo is not rendered
-        # correctly
-        self.ctx.fill()
-        #: add text area to conflict_area
-        area = box(newx, newy + height, newx + width, newy)
+        #: determine covered area by text
+        area = box(*self.ctx.path_extents())
         if image is not None:
             area = area.union(image_area.buffer(self.CONFLICT_MARGIN, 1))
         try:
             self.conflict_area = self.conflict_area.union(
                 area.buffer(self.CONFLICT_MARGIN, 1))
-        except ValueError: # Empty GeometryCollection
+        except ValueError: # empty geometry
             pass
+        #: fill characters with color
+        self.ctx.set_source_rgba(*color)
+        self.ctx.fill()
         
     def draw_text_on_line(
             self,
@@ -345,10 +326,8 @@ class Map(object):
             color=(0, 0, 0),
             font_size=10,
             font_family='Tahoma',
-            font_variant='normal',
-            font_style='normal',
-            font_stretch_style='normal',
-            font_weight='normal',
+            font_style=cairo.FONT_SLANT_NORMAL,
+            font_weight=cairo.FONT_WEIGHT_NORMAL,
             text_halo_width=1,
             text_halo_color=(1, 1, 1),
             text_halo_line_cap=cairo.LINE_CAP_ROUND,
@@ -365,11 +344,7 @@ class Map(object):
         :param color: ``(r, g, b[, a])``
         :param font_size: font-size in unit (pixel/point)
         :param font_family: font name
-        :param font_variant: normal, small-caps
         :param font_style: normal, oblique, italic
-        :param font_stretch_style: ultra-condensed, extra-condensed, condensed,
-            semi-condensed, normal, semi-expanded, expanded, extra-expanded,
-            ultra-expanded
         :param font_weight: ultra-light, light, normal, bold, ultra-bold, heavy
         :param text_halo_width: border-width in unit (pixel/point)
         :param text_halo_color: ``(r, g, b[, a])``
@@ -386,21 +361,15 @@ class Map(object):
             return
         coords = map(lambda c: self.transform_coords(*c), coords)
         
+        self.ctx.select_font_face(font_family, font_style, font_weight)
+        self.ctx.set_font_size(font_size)
         text = utils.text_transform(text, text_transform)
-        font_desc = pango.FontDescription(' '.join(
-            (font_family, font_weight, font_variant, font_style,
-            font_stretch_style, str(font_size))
-        ))
-        layout = self.ctx_pango.create_layout()
-        layout.set_font_description(font_desc)
-        layout.set_text(text)
-        logical_extents, ink_extents = layout.get_pixel_extents()
-        width = logical_extents[2] - logical_extents[0]
-        layout_height = ink_extents[3] - ink_extents[1]
+        width, height = self.ctx.text_extents(text)[2:4]
+        font_ascent, font_descent = self.ctx.font_extents()[0:2]
         self.ctx.new_path()
         #: make sure line does not intersect other conflict objects
         line = LineString(coords)
-        line = line.difference(self.map_area.exterior.buffer(layout_height))
+        line = line.difference(self.map_area.exterior.buffer(height))
         line = line.difference(self.conflict_area)
         #: check whether line is empty or is split into several different parts
         if line.geom_type == 'GeometryCollection':
@@ -429,14 +398,12 @@ class Map(object):
             coords = tuple(reversed(coords))
         # translate linestring so text is rendered vertically in the middle
         line = LineString(tuple(coords))
-        offset = layout_height / 2. + logical_extents[1] / 2.
-        line = line.parallel_offset(offset, 'right', resolution=3)
-        line = LineString(tuple(reversed(line.coords)))
+        offset = font_ascent / 2. - font_descent / 2.
+        line = line.parallel_offset(offset, 'left', resolution=3)
         # make sure text is rendered centered on line
         start_len = (line.length - width) / 2.
         char_coords = None
-        chars = utils.generate_char_geoms(self.ctx, self.ctx_pango, text,
-            font_desc)
+        chars = utils.generate_char_geoms(self.ctx, text)
         #: draw all character paths
         for char in utils.iter_chars_on_line(chars, line, start_len):
             for geom in char.geoms:
@@ -447,7 +414,7 @@ class Map(object):
                 self.ctx.close_path()
         #: only add line to reserved area if text was drawn
         if char_coords is not None:
-            covered = line.buffer(layout_height + self.CONFLICT_MARGIN)
+            covered = line.buffer(height + self.CONFLICT_MARGIN)
             self.conflict_area = self.conflict_area.union(covered)
         #: draw border around characters
         self.ctx.set_line_cap(cairo.LINE_CAP_ROUND)

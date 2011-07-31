@@ -34,80 +34,80 @@ POINT:
                 z-index: 99
             - 3-10:
                 font-weight: bold
-                font-size: 8
+                font-size: 11
             - 6-8:
-                font-size: 9
+                font-size: 12
             - 3-5:
                 text-color: 0 0 0
-                font-size: 10
+                font-size: 13
         town:
             - 0-10:
                 text: name
                 text-color: 0.4 0.4 0.4
-                font-size: 7
+                font-size: 9
                 text-halo-color: 1 1 1 0.88
                 text-halo-width: 1.5
                 z-index: 98
             - 3-8:
-                font-size: 8
+                font-size: 10
             - 0-6:
                 font-weight: bold
                 text-color: 0.1 0.1 0.1
             - 0-2:
-                font-size: 9
+                font-size: 11
                 font-weight: bold
             - 0, 1:
-                font-size: 10
+                font-size: 12
         suburb:
             - 1-5:
                 text: name
                 text-color: 0.4 0.4 0.4
-                font-size: 8
+                font-size: 10
                 text-halo-color: 1 1 1 0.88
                 text-halo-width: 1.5
             - 0-2:
-                font-size: 9
+                font-size: 11
                 font-weight: bold
             - 0, 1:
-                font-size: 10
+                font-size: 12
         village:
             - 0-7:
                 text: name
                 text-color: 0.4 0.4 0.4
                 text-halo-color: 1 1 1 0.88
                 text-halo-width: 1.5
-                font-size: 7
-            - 0-6:
-                font-size: 8
-            - 0-2:
                 font-size: 9
+            - 0-6:
+                font-size: 10
+            - 0-2:
+                font-size: 11
                 font-weight: bold
             - 0, 1:
-                font-size: 10
+                font-size: 12
         hamlet, isolated_dwelling, farm, locality:
             - 0-4:
                 text: name
                 text-color: 0.4 0.4 0.4
                 text-halo-color: 1 1 1 0.88
                 text-halo-width: 1.5
-                font-size: 7
-            - 0-3:
-                font-size: 8
-            - 0-2:
                 font-size: 9
+            - 0-3:
+                font-size: 10
+            - 0-2:
+                font-size: 11
                 font-weight: bold
             - 0, 1:
-                font-size: 10
+                font-size: 12
         island:
             - 0-4:
                 text: name
                 text-color: 0.4 0.4 0.4
                 text-halo-color: 1 1 1 0.88
                 text-halo-width: 1.5
-                font-size: 7
+                font-size: 9
                 z-index: 93
             - 0-3:
-                font-size: 8
+                font-size: 11
             - 0-2:
                 font-weight: bold
         islet:
@@ -116,7 +116,7 @@ POINT:
                 text-color: 0.4 0.4 0.4
                 text-halo-color: 1 1 1 0.88
                 text-halo-width: 1.5
-                font-size: 7
+                font-size: 10
                 z-index: 92
                 
                 
@@ -187,17 +187,17 @@ LINE:
             - 0-3:
                 width: 3
             - 0-4:
-                font-size: 7
+                font-size: 9
                 text: name
                 text-color: 0.35 0.19 0.09
                 text-halo-width: 1.5
                 text-halo-color: 0.98 0.88 0.58 0.8
             - 0-3:
-                font-size: 8
+                font-size: 10
             - 0, 1:
                 width: 4
             - 0:
-                font-size: 9
+                font-size: 11
                 width: 7
         secondary, secondary_link:
             - 0-9:
@@ -210,7 +210,7 @@ LINE:
                 width: 1.5
                 border-width: 1
             - 0-4:
-                font-size: 7
+                font-size: 9
                 text: name
                 text-color: 0.45 0.34 0.16
                 text-halo-width: 1.5
@@ -218,11 +218,11 @@ LINE:
             - 0-3:
                 width: 3
                 border-width: 1
-                font-size: 8
+                font-size: 10
             - 0, 1:
                 width: 4
             - 0:
-                font-size: 9
+                font-size: 11
                 width: 7
         tertiary:
             - 0-6:
@@ -235,7 +235,7 @@ LINE:
                 text-color: 0.23 0.23 0.23
                 text-halo-width: 1.5
                 text-halo-color: 1 1 1 0.8
-                font-size: 8
+                font-size: 10
                 color: 1 1 1
                 border-width: 1
                 border-color: 0.74 0.74 0.74
@@ -244,7 +244,7 @@ LINE:
             - 0, 1:
                 width: 4
             - 0:
-                font-size: 9
+                font-size: 11
                 width: 7
         unclassified, road:
             - 0-6:
@@ -258,7 +258,7 @@ LINE:
                 border-color: 0.74 0.74 0.74
                 z-index: 95
             - 0-2:
-                font-size: 8
+                font-size: 10
                 text: name
                 text-color: 0.23 0.23 0.23
                 text-halo-width: 1.5
@@ -266,7 +266,7 @@ LINE:
             - 0, 1:
                 width: 4
             - 0:
-                font-size: 9
+                font-size: 11
                 width: 6
         residential, living_street, service:
             - 0-6:
@@ -280,7 +280,7 @@ LINE:
                 border-width: 1
                 z-index: 95
             - 0-2:
-                font-size: 8
+                font-size: 10
                 text: name
                 text-color: 0.23 0.23 0.23
                 text-halo-width: 1.5
@@ -288,7 +288,7 @@ LINE:
             - 0, 1:
                 width: 4
             - 0:
-                font-size: 9
+                font-size: 11
                 width: 6
         track, pedestrian, raceway, services, bus_guidewaypath, cycleway, footway, bridleway, steps:
             - 0-3:
@@ -303,7 +303,7 @@ LINE:
             - 0, 1:
                 width: 2
                 border-width: 1
-                font-size: 8
+                font-size: 10
                 text: name
                 text-color: 0.23 0.23 0.23
                 text-halo-width: 1.5
@@ -334,14 +334,14 @@ LINE:
                 z-index: 0
             - 0-4:
                 width: 2
-                font-size: 8
+                font-size: 10
                 font-style: italic
                 text: name
                 text-color: 0.23 0.38 0.51
                 text-halo-width: 1
                 text-halo-color: 1 1 1 0.7
             - 0, 1:
-                font-size: 9
+                font-size: 11
                 width: 4
         stream:
             - 0-5:
@@ -350,7 +350,7 @@ LINE:
                 z-index: 0
             - 0, 1:
                 width: 2
-                font-size: 8
+                font-size: 10
                 font-style: italic
                 text: name
                 text-color: 0.23 0.38 0.51
