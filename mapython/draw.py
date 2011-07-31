@@ -402,7 +402,7 @@ class Map(object):
             coords = tuple(reversed(coords))
         # translate linestring so text is rendered vertically in the middle
         line = LineString(tuple(coords))
-        offset = font_ascent / 2. - font_descent / 2.
+        offset = font_ascent / 2. - font_descent
         line = line.parallel_offset(offset, 'left', resolution=3)
         # make sure text is rendered centered on line
         start_len = (line.length - width) / 2.
