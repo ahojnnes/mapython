@@ -180,9 +180,7 @@ def generate_char_geoms(ctx, text, spacing=0.8, space_width=3):
     previous character is determined.
     
     :param ctx: :class:`cairo.Context` object
-    :param ctx_pango: :class:`pangocairo.CairoContext` object
     :param text: text as str or unicode
-    :param font_desc: :class:`pango.FontDescription` object for this text
     :param spacing: spacing between characters as int or float
     :param space_width: width of one space character
     

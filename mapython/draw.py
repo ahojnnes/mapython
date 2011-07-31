@@ -238,8 +238,10 @@ class Map(object):
         :param color: ``(r, g, b[, a])``
         :param font_size: font-size in unit (pixel/point)
         :param font_family: font name
-        :param font_style: normal, oblique, italic
-        :param font_weight: ultra-light, light, normal, bold, ultra-bold, heavy
+        :param font_style: ``cairo.FONT_SLANT_NORMAL``,
+            ``cairo.FONT_SLANT_ITALIC`` or ``cairo.FONT_SLANT_OBLIQUE``
+        :param font_weight: ``cairo.FONT_WEIGHT_NORMAL`` or 
+            ``cairo.FONT_WEIGHT_BOLD``
         :param text_halo_width: border-width in unit (pixel/point)
         :param text_halo_color: ``(r, g, b[, a])``
         :param text_halo_line_cap: one of :const:`cairo.LINE_CAP_*`
@@ -344,8 +346,10 @@ class Map(object):
         :param color: ``(r, g, b[, a])``
         :param font_size: font-size in unit (pixel/point)
         :param font_family: font name
-        :param font_style: normal, oblique, italic
-        :param font_weight: ultra-light, light, normal, bold, ultra-bold, heavy
+        :param font_style: ``cairo.FONT_SLANT_NORMAL``,
+            ``cairo.FONT_SLANT_ITALIC`` or ``cairo.FONT_SLANT_OBLIQUE``
+        :param font_weight: ``cairo.FONT_WEIGHT_NORMAL`` or 
+            ``cairo.FONT_WEIGHT_BOLD``
         :param text_halo_width: border-width in unit (pixel/point)
         :param text_halo_color: ``(r, g, b[, a])``
         :param text_halo_line_cap: one of :const:`cairo.LINE_CAP_*`
