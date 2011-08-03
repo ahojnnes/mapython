@@ -372,7 +372,8 @@ def close_coastlines(lines, bbox):
             #: on the same bounding box line
             for line in lines:
                 lp = Point(line.coords[-1])
-                if bline.intersects(lp) and prevrad >= point_radians(lp, centroid):
+                if bline.intersects(lp) \
+                        and prevrad >= point_radians(lp, centroid):
                     area.extend(reversed(line.coords))
                     prevend = Point(line.coords[0])
                     lines.remove(line)
