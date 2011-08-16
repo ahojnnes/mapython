@@ -204,7 +204,7 @@ class Map(object):
         self.context.set_line_join(border_line_join)
         self.context.set_dash(border_line_dash or tuple())
         self.context.stroke_preserve()
-        #: fill polygon with color
+        #: fill polygon with color [and background]
         self.context.set_source_rgba(*background_color)
         if background_image is not None:
             self.context.fill_preserve()
@@ -213,7 +213,42 @@ class Map(object):
             pattern.set_extend(cairo.EXTEND_REPEAT)
             self.context.set_source(pattern)
         self.context.fill()
-        
+
+    def draw_arc(
+        self,
+        coord,
+        radius,
+        angle1=0,
+        angle2=2*math.pi,
+        background_color=(0, 0, 0, 0),
+        background_image=None,
+        border_width=0,
+        border_color=(1, 1, 1, 1),
+        border_line_cap=cairo.LINE_CAP_ROUND,
+        border_line_join=cairo.LINE_JOIN_ROUND,
+        border_line_dash=None
+    ):
+        x, y = self.transform_coords(*coord)
+        #: draw circle
+        self.context.arc(x, y, radius, angle1, angle2)
+        #: fill arc with color [and background]
+        self.context.set_source_rgba(*background_color)
+        if background_image is not None:
+            self.context.fill_preserve()
+            image = cairo.ImageSurface.create_from_png(background_image)
+            pattern = cairo.SurfacePattern(image)
+            pattern.set_extend(cairo.EXTEND_REPEAT)
+            self.context.set_source(pattern)
+        self.context.fill_preserve()
+        #: draw border
+        self.context.set_source_rgba(*border_color)
+        self.context.set_line_width(border_width)
+        self.context.set_line_cap(border_line_cap)
+        self.context.set_line_join(border_line_join)
+        self.context.set_dash(border_line_dash or tuple())
+        self.context.stroke()
+
+
     def draw_text(
         self,
         coord,
