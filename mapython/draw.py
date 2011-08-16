@@ -123,14 +123,14 @@ class Map(object):
         self.context.fill()
         
     def draw_line(
-            self,
-            coords,
-            color=(0, 0, 0),
-            width=1,
-            line_cap=cairo.LINE_CAP_ROUND,
-            line_join=cairo.LINE_JOIN_ROUND,
-            line_dash=None
-        ):
+        self,
+        coords,
+        color=(0, 0, 0),
+        width=1,
+        line_cap=cairo.LINE_CAP_ROUND,
+        line_join=cairo.LINE_JOIN_ROUND,
+        line_dash=None
+    ):
         '''
         Draws a line.
         
@@ -158,17 +158,17 @@ class Map(object):
         self.context.stroke()
         
     def draw_polygon(
-            self, 
-            exterior,
-            interiors=None,
-            background_color=(0, 0, 0, 0),
-            background_image=None,
-            border_width=0,
-            border_color=(1, 1, 1, 1),
-            border_line_cap=cairo.LINE_CAP_ROUND,
-            border_line_join=cairo.LINE_JOIN_ROUND,
-            border_line_dash=None,
-        ):
+        self, 
+        exterior,
+        interiors=None,
+        background_color=(0, 0, 0, 0),
+        background_image=None,
+        border_width=0,
+        border_color=(1, 1, 1, 1),
+        border_line_cap=cairo.LINE_CAP_ROUND,
+        border_line_join=cairo.LINE_JOIN_ROUND,
+        border_line_dash=None,
+    ):
         '''
         Draws a polygon.
         
@@ -215,23 +215,23 @@ class Map(object):
         self.context.fill()
         
     def draw_text(
-            self,
-            coord,
-            text,
-            color=(0, 0, 0),
-            font_size=11,
-            font_family='Tahoma',
-            font_style=cairo.FONT_SLANT_NORMAL,
-            font_weight=cairo.FONT_WEIGHT_NORMAL,
-            text_halo_width=3,
-            text_halo_color=(1, 1, 1),
-            text_halo_line_cap=cairo.LINE_CAP_ROUND,
-            text_halo_line_join=cairo.LINE_JOIN_ROUND,
-            text_halo_line_dash=None,
-            text_transform=None,
-            image=None,
-            image_margin=4
-        ):
+        self,
+        coord,
+        text,
+        color=(0, 0, 0),
+        font_size=11,
+        font_family='Tahoma',
+        font_style=cairo.FONT_SLANT_NORMAL,
+        font_weight=cairo.FONT_WEIGHT_NORMAL,
+        text_halo_width=3,
+        text_halo_color=(1, 1, 1),
+        text_halo_line_cap=cairo.LINE_CAP_ROUND,
+        text_halo_line_join=cairo.LINE_JOIN_ROUND,
+        text_halo_line_dash=None,
+        text_transform=None,
+        image=None,
+        image_margin=4
+    ):
         '''
         Draws text either centered on coordinate or the image centered on
         coordinate and text on the right of the image.
@@ -325,21 +325,21 @@ class Map(object):
         self.context.fill()
         
     def draw_text_on_line(
-            self,
-            coords,
-            text,
-            color=(0, 0, 0),
-            font_size=10,
-            font_family='Tahoma',
-            font_style=cairo.FONT_SLANT_NORMAL,
-            font_weight=cairo.FONT_WEIGHT_NORMAL,
-            text_halo_width=1,
-            text_halo_color=(1, 1, 1),
-            text_halo_line_cap=cairo.LINE_CAP_ROUND,
-            text_halo_line_join=cairo.LINE_JOIN_ROUND,
-            text_halo_line_dash=None,
-            text_transform=None,
-        ):
+        self,
+        coords,
+        text,
+        color=(0, 0, 0),
+        font_size=10,
+        font_family='Tahoma',
+        font_style=cairo.FONT_SLANT_NORMAL,
+        font_weight=cairo.FONT_WEIGHT_NORMAL,
+        text_halo_width=1,
+        text_halo_color=(1, 1, 1),
+        text_halo_line_cap=cairo.LINE_CAP_ROUND,
+        text_halo_line_join=cairo.LINE_JOIN_ROUND,
+        text_halo_line_dash=None,
+        text_transform=None,
+    ):
         '''
         Draws text on a line. Tries to find a position with the least change
         in gradient and which is closest to the middle of the line.
