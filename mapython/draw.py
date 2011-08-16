@@ -228,9 +228,32 @@ class Map(object):
         border_line_join=cairo.LINE_JOIN_ROUND,
         border_line_dash=None
     ):
+        '''
+        Draws an arc. Angles are counted from the positive X axis
+        to the positive Y axis.
+        
+        :param coord: ``(lon, lat)``
+        :param radius: as float in unit (pixel/point)
+        :param angle1: start angle in radians [0, 2pi]
+        :param angle2: end angle in radians [0, 2pi]
+        :param background_color: ``(r, g, b[, a])``
+        :param background_image: file object or path to image file
+        :param border_width: border-width in unit (pixel/point)
+        :param border_color: ``(r, g, b[, a])``
+        :param border_line_cap: one of :const:`cairo.LINE_CAP_*`
+        :param border_line_join: one of :const:`cairo.LINE_JOIN_*`
+        :param border_line_dash: list/tuple used by
+            :meth:`cairo.Context.set_dash`
+        '''
+
         x, y = self.transform_coords(*coord)
         #: draw circle
+        circle = (angle1 - angle2) % (2 * math.pi) == 0
+        if not circle:
+            self.context.move_to(x, y)
         self.context.arc(x, y, radius, angle1, angle2)
+        if not circle:
+            self.context.close_path()
         #: fill arc with color [and background]
         self.context.set_source_rgba(*background_color)
         if background_image is not None:
