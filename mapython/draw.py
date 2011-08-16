@@ -197,13 +197,6 @@ class Map(object):
             for lon, lat in coords[1:]:
                 x, y = self.transform_coords(lon, lat)
                 self.context.line_to(x, y)
-        #: draw border
-        self.context.set_source_rgba(*border_color)
-        self.context.set_line_width(border_width)
-        self.context.set_line_cap(border_line_cap)
-        self.context.set_line_join(border_line_join)
-        self.context.set_dash(border_line_dash or tuple())
-        self.context.stroke_preserve()
         #: fill polygon with color [and background]
         self.context.set_source_rgba(*background_color)
         if background_image is not None:
@@ -212,7 +205,14 @@ class Map(object):
             pattern = cairo.SurfacePattern(image)
             pattern.set_extend(cairo.EXTEND_REPEAT)
             self.context.set_source(pattern)
-        self.context.fill()
+        self.context.fill_preserve()
+        #: draw border
+        self.context.set_source_rgba(*border_color)
+        self.context.set_line_width(border_width)
+        self.context.set_line_cap(border_line_cap)
+        self.context.set_line_join(border_line_join)
+        self.context.set_dash(border_line_dash or tuple())
+        self.context.stroke()
 
     def draw_arc(
         self,
@@ -247,7 +247,6 @@ class Map(object):
         self.context.set_line_join(border_line_join)
         self.context.set_dash(border_line_dash or tuple())
         self.context.stroke()
-
 
     def draw_text(
         self,
