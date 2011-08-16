@@ -251,4 +251,3 @@ class StyleSheet(object):
         for style in self.styles[level][geom_type].itervalues():
             yield style
             
-            

@@ -42,3 +42,4 @@ setup(
     ],
     package_data = {'mapython': ['styles/*']},
 )
+

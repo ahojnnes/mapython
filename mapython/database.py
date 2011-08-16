@@ -117,3 +117,4 @@ geoalchemy.GeometryDDL(OSMPoint.__table__)
 geoalchemy.GeometryDDL(OSMLine.__table__)
 geoalchemy.GeometryDDL(OSMPolygon.__table__)
 geoalchemy.GeometryDDL(OSMRoad.__table__)
+

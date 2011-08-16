@@ -53,7 +53,7 @@ class Map(object):
         self._init_surface()
         # inits: self.m2unit_matrix, self.unit2m_matrix, self.scale
         self._init_transformation()
-        self.ctx = cairo.Context(self.surface)
+        self.context = cairo.Context(self.surface)
         self.map_area = box(0, 0, self.width, self.height)
         self.conflict_area = Polygon(
             # buffer around map where no text should be drawn
@@ -118,9 +118,9 @@ class Map(object):
         :param color: ``(r, g, b[, a])``
         '''
         
-        self.ctx.rectangle(0, 0, self.width, self.height)
-        self.ctx.set_source_rgba(*color)
-        self.ctx.fill()
+        self.context.rectangle(0, 0, self.width, self.height)
+        self.context.set_source_rgba(*color)
+        self.context.fill()
         
     def draw_line(
             self,
@@ -144,18 +144,18 @@ class Map(object):
         
         #: move to first coords
         x, y = self.transform_coords(*coords[0])
-        self.ctx.move_to(x, y)
+        self.context.move_to(x, y)
         #: draw line to rest of coords
         for lon, lat in coords[1:]:
             x, y = self.transform_coords(lon, lat)
-            self.ctx.line_to(x, y)
+            self.context.line_to(x, y)
         #: fill line with color
-        self.ctx.set_source_rgba(*color)
-        self.ctx.set_line_width(width)
-        self.ctx.set_line_cap(line_cap)
-        self.ctx.set_line_join(line_join)
-        self.ctx.set_dash(line_dash or tuple())
-        self.ctx.stroke()
+        self.context.set_source_rgba(*color)
+        self.context.set_line_width(width)
+        self.context.set_line_cap(line_cap)
+        self.context.set_line_join(line_join)
+        self.context.set_dash(line_dash or tuple())
+        self.context.stroke()
         
     def draw_polygon(
             self, 
@@ -192,27 +192,27 @@ class Map(object):
         for coords in polygons:
             #: move to first coords
             x, y = self.transform_coords(*coords[0])
-            self.ctx.move_to(x, y)
+            self.context.move_to(x, y)
             #: draw line to rest of coords
             for lon, lat in coords[1:]:
                 x, y = self.transform_coords(lon, lat)
-                self.ctx.line_to(x, y)
+                self.context.line_to(x, y)
         #: draw border
-        self.ctx.set_source_rgba(*border_color)
-        self.ctx.set_line_width(border_width)
-        self.ctx.set_line_cap(border_line_cap)
-        self.ctx.set_line_join(border_line_join)
-        self.ctx.set_dash(border_line_dash or tuple())
-        self.ctx.stroke_preserve()
+        self.context.set_source_rgba(*border_color)
+        self.context.set_line_width(border_width)
+        self.context.set_line_cap(border_line_cap)
+        self.context.set_line_join(border_line_join)
+        self.context.set_dash(border_line_dash or tuple())
+        self.context.stroke_preserve()
         #: fill polygon with color
-        self.ctx.set_source_rgba(*background_color)
+        self.context.set_source_rgba(*background_color)
         if background_image is not None:
-            self.ctx.fill_preserve()
+            self.context.fill_preserve()
             image = cairo.ImageSurface.create_from_png(background_image)
             pattern = cairo.SurfacePattern(image)
             pattern.set_extend(cairo.EXTEND_REPEAT)
-            self.ctx.set_source(pattern)
-        self.ctx.fill()
+            self.context.set_source(pattern)
+        self.context.fill()
         
     def draw_text(
             self,
@@ -260,13 +260,13 @@ class Map(object):
         x, y = self.transform_coords(*coord)
         # abort if there are already too many text_paths in this area
         if self.conflict_density(x, y) > 1:
-            self.ctx.new_path()
+            self.context.new_path()
             return
         text = utils.text_transform(text, text_transform)
         #: draw spot name
-        self.ctx.select_font_face(font_family, font_style, font_weight)
-        self.ctx.set_font_size(font_size)
-        width, height = self.ctx.text_extents(text)[2:4]
+        self.context.select_font_face(font_family, font_style, font_weight)
+        self.context.set_font_size(font_size)
+        width, height = self.context.text_extents(text)[2:4]
         if image is not None:
             image = cairo.ImageSurface.create_from_png(image)
             image_width, image_height = image.get_width(), image.get_height()
@@ -283,12 +283,12 @@ class Map(object):
         try:
             newx, newy = self.find_free_position(text_area)
         except TypeError: # no free position found
-            self.ctx.new_path()
+            self.context.new_path()
             return
         if image is not None:
             y = newy + (max(height, image_height) - image_height) / 2.0
-            self.ctx.set_source_surface(image, newx, y)
-            self.ctx.paint()
+            self.context.set_source_surface(image, newx, y)
+            self.context.paint()
             image_area = box(x, y, x + image_width, y + image_height)
             newx += image_width + image_margin
             newy += (image_height + height) / 2.0
@@ -298,21 +298,21 @@ class Map(object):
             newx, newy = newx, newy + height
         # abort if new position is too far away from original position
         if Point(newx, newy).distance(Point(x, y)) > 0.1 * self.max_size:
-            self.ctx.new_path()
+            self.context.new_path()
             return
         # round positions for clear text rendering
-        self.ctx.move_to(int(newx), int(newy))
-        self.ctx.text_path(text)
+        self.context.move_to(int(newx), int(newy))
+        self.context.text_path(text)
         #: draw text halo
-        self.ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-        self.ctx.set_source_rgba(*text_halo_color)
-        self.ctx.set_line_width(2 * text_halo_width)
-        self.ctx.set_line_cap(text_halo_line_cap)
-        self.ctx.set_line_join(text_halo_line_join)
-        self.ctx.set_dash(text_halo_line_dash or tuple())
-        self.ctx.stroke_preserve()
+        self.context.set_line_cap(cairo.LINE_CAP_ROUND)
+        self.context.set_source_rgba(*text_halo_color)
+        self.context.set_line_width(2 * text_halo_width)
+        self.context.set_line_cap(text_halo_line_cap)
+        self.context.set_line_join(text_halo_line_join)
+        self.context.set_dash(text_halo_line_dash or tuple())
+        self.context.stroke_preserve()
         #: determine covered area by text
-        area = box(*self.ctx.path_extents())
+        area = box(*self.context.path_extents())
         if image is not None:
             area = area.union(image_area.buffer(self.CONFLICT_MARGIN, 1))
         try:
@@ -321,8 +321,8 @@ class Map(object):
         except ValueError: # empty geometry
             pass
         #: fill characters with color
-        self.ctx.set_source_rgba(*color)
-        self.ctx.fill()
+        self.context.set_source_rgba(*color)
+        self.context.fill()
         
     def draw_text_on_line(
             self,
@@ -368,12 +368,12 @@ class Map(object):
             return
         coords = map(lambda c: self.transform_coords(*c), coords)
         
-        self.ctx.select_font_face(font_family, font_style, font_weight)
-        self.ctx.set_font_size(font_size)
+        self.context.select_font_face(font_family, font_style, font_weight)
+        self.context.set_font_size(font_size)
         text = utils.text_transform(text, text_transform)
-        width, height = self.ctx.text_extents(text)[2:4]
-        font_ascent, font_descent = self.ctx.font_extents()[0:2]
-        self.ctx.new_path()
+        width, height = self.context.text_extents(text)[2:4]
+        font_ascent, font_descent = self.context.font_extents()[0:2]
+        self.context.new_path()
         #: make sure line does not intersect other conflict objects
         line = LineString(coords)
         line = line.difference(self.map_area.exterior.buffer(height))
@@ -410,30 +410,30 @@ class Map(object):
         # make sure text is rendered centered on line
         start_len = (line.length - width) / 2.
         char_coords = None
-        chars = utils.generate_char_geoms(self.ctx, text)
+        chars = utils.generate_char_geoms(self.context, text)
         #: draw all character paths
         for char in utils.iter_chars_on_line(chars, line, start_len):
             for geom in char.geoms:
                 char_coords = iter(geom.coords)
-                self.ctx.move_to(*char_coords.next())
+                self.context.move_to(*char_coords.next())
                 for lon, lat in char_coords:
-                    self.ctx.line_to(lon, lat)
-                self.ctx.close_path()
+                    self.context.line_to(lon, lat)
+                self.context.close_path()
         #: only add line to reserved area if text was drawn
         if char_coords is not None:
             covered = line.buffer(height + self.CONFLICT_MARGIN)
             self.conflict_area = self.conflict_area.union(covered)
         #: draw border around characters
-        self.ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-        self.ctx.set_source_rgba(*text_halo_color)
-        self.ctx.set_line_width(2 * text_halo_width)
-        self.ctx.set_line_cap(text_halo_line_cap)
-        self.ctx.set_line_join(text_halo_line_join)
-        self.ctx.set_dash(text_halo_line_dash or tuple())
-        self.ctx.stroke_preserve()
+        self.context.set_line_cap(cairo.LINE_CAP_ROUND)
+        self.context.set_source_rgba(*text_halo_color)
+        self.context.set_line_width(2 * text_halo_width)
+        self.context.set_line_cap(text_halo_line_cap)
+        self.context.set_line_join(text_halo_line_join)
+        self.context.set_dash(text_halo_line_dash or tuple())
+        self.context.stroke_preserve()
         #: fill actual text
-        self.ctx.set_source_rgba(*color)
-        self.ctx.fill()
+        self.context.set_source_rgba(*color)
+        self.context.fill()
         
     def draw_image(self, coord, image):
         '''
@@ -454,8 +454,8 @@ class Map(object):
         )
         if newpos is None:
             return
-        self.ctx.set_source_surface(image, x, y)
-        self.ctx.paint()
+        self.context.set_source_surface(image, x, y)
+        self.context.paint()
         self.conflict_area = self.conflict_area.union(
             box(x, y, x + width, y + height))
             
@@ -556,4 +556,4 @@ class Map(object):
             self.surface.write_to_png(self.fobj)
         else:
             self.surface.finish()
-            
+
