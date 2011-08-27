@@ -336,7 +336,12 @@ class Map(object):
         else:
             # place text directly on coord
             x -= width / 2.0
-            text_area = box(x - 2, y - height - 2, x + 2 + width, y + 2)
+            text_area = box(
+                x - 2,
+                y - height / 2. - 2,
+                x + 2 + width,
+                y + height / 2. + 2
+            )
         try:
             newx, newy = self.find_free_position(text_area)
         except TypeError: # no free position found
@@ -352,7 +357,7 @@ class Map(object):
         else:
             # find_free_position uses minx and miny as position but 
             # cairo uses bottom left corner
-            newx, newy = newx, newy + height
+            newx, newy = newx, newy + height + 2
         # abort if new position is too far away from original position
         if Point(newx, newy).distance(Point(x, y)) > 0.1 * self.max_size:
             self.context.new_path()
