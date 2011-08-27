@@ -186,7 +186,7 @@ def generate_char_geoms(ctx, text, spacing=0.8, space_width=3):
     
     :returns: list containing (geometry, width, spacing) tuples
     '''
-    
+
     ctx.save()
     # list containing geometries and info for each character as a tuple:
     # (geometry, width, height, spacing)

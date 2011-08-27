@@ -213,6 +213,23 @@ class Renderer(object):
                     or point.style.get('image') is not None
                 ):
                     self.conflict_list.append(point)
+                if point.style.get('circle-radius') is not None:
+                    coord = numpy.array(wkb.loads(str(point.geom.geom_wkb)))
+                    self.mapobj.draw_arc(
+                        coord,
+                        radius=point.style.get('circle-radius'),
+                        background_color=point.style.get('circle-background-color',
+                            (0, 0, 0, 0)),
+                        background_image=point.style.get('circle-background-image'),
+                        border_width=point.style.get('border-width', 0),
+                        border_color=point.style.get('border-color',
+                            (0, 0, 0, 0)),
+                        border_line_cap=point.style.get('border-line-cap',
+                            cairo.LINE_CAP_ROUND),
+                        border_line_join=point.style.get('border-line-join',
+                            cairo.LINE_JOIN_ROUND),
+                        border_line_dash=point.style.get('border-line-dash')
+                    )
                     
     def conflicts(self):
         '''
