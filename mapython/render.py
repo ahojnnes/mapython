@@ -93,11 +93,11 @@ class Renderer(object):
         '''
         
         coastlines = session.query(OSMLine).filter(and_(
-            BBOX_QUERY_COND % ((OSMLine.__table__, ) + self.bbox.bounds),
+            BBOX_QUERY_COND % ((OSMLine.__table__, ) + self.mapobj.bbox.bounds),
             OSMLine.natural=='coastline'
         )).all()
         coastpolygons = session.query(OSMPolygon).filter(and_(
-            BBOX_QUERY_COND % ((OSMPolygon.__table__, ) + self.bbox.bounds),
+            BBOX_QUERY_COND % ((OSMPolygon.__table__, ) + self.mapobj.bbox.bounds),
             OSMPolygon.natural=='coastline'
         )).all()
         # only fill map with sea color if there is a at least one coastline
@@ -134,7 +134,7 @@ class Renderer(object):
                     background_color=self.stylesheet.sea_background
                 )
             #: fill map with sea background if there is no shoreline
-            if shore is None:
+            if shore is None and islands:
                 self.mapobj.draw_background(self.stylesheet.sea_background)
             #: fill land filled area with map background
             for island in islands:
