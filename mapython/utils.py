@@ -361,8 +361,13 @@ def close_coastlines(lines, bbox):
                     break
             next_line = False
             for line in lines:
-                if bline.intersects(Point(line.coords[0])) \
-                        and line.angle >= prevangle:
+                if (
+                    bline.intersects(Point(line.coords[0]))
+                    #: make sure line is on the right hand side
+                    #: (clockwise rotation)
+                    and line.angle >= prevangle
+                    and abs(line.angle - prevangle) < math.pi
+                ):
                     coastline.extend(line.coords)
                     prevend = Point(line.coords[-1])
                     lines.remove(line)
