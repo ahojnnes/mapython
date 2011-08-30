@@ -89,9 +89,9 @@ def linestring_lengths(coords):
     for dx, dy in coord_diffs(coords):
         yield math.sqrt(dx**2 + dy**2)
         
-def point_radians(point1, point2):
+def azimuth(point1, point2):
     '''
-    Returns radians of line between two points.
+    Returns azimuth of line between two points.
     
     :param point1: :class:`shapely.geometry.Point` object
     :param point2: :class:`shapely.geometry.Point` object
@@ -99,7 +99,7 @@ def point_radians(point1, point2):
     :returns: radians [0, 2pi] as int or float
     '''
     
-    rad = math.atan2(point1.y - point2.y, point1.x - point2.x)
+    rad = math.atan2(point2.x - point1.x, point2.y - point1.y)
     return rad if rad > 0 else rad + 2 * math.pi
     
 def linestring_char_radians(line, length, width, bearing=0.5):
@@ -293,16 +293,29 @@ def text_transform(text, transformation):
                 new.append(word[0].upper() + word[1:])
             return ' '.join(new)
     return text
+
+def merge_lines(lines):
+    '''
+    Returns tuple of merged lines.
+
+    :param lines: iterable of :class:`shapely.geometry.LineString`
+
+    :returns: tuple :class:`shapely.geometry.LineString`
+    '''
     
+    merged = linemerge(lines)
+    if merged.geom_type == 'LineString':
+        merged = (merged, )
+    else: # MultiLineString
+        merged = tuple(merged)
+    return merged
+
 def close_coastlines(lines, bbox):
     '''
-    Tries to close open coastlines. This algorithm assumes that water is
+    Tries to close open coast-/shorelines. This algorithm assumes that water is
     always on the right side of the coastline (see
     http://wiki.openstreetmap.org/wiki/Tiles@home/Dev/Interim_Coastline_Support).
-    Therefore it first merges the coastlines and then tries to merge
-    them with the bounding box of the map in clockwise direction
-    (because we want to fill land mass with the map background and water is on
-    the right side of the coastline).
+    Returns closed lines that contain water.
     
     :param lines: iterable of :class:`shapely.geometry.LineString` objects
     :param bbox: :class:`shapely.geometry.Polygon` object of map bbox
@@ -310,29 +323,6 @@ def close_coastlines(lines, bbox):
     :yields: closed :class:`shapely.geometry.LineString` objects
     '''
     
-    #: merge lines
-    merged = linemerge(lines)
-    if merged.geom_type == 'LineString':
-        merged = (merged, )
-    else: # MultiLineString
-        merged = tuple(merged)
-    lines = []
-    for line in merged:
-        # yield if line is already a closed polygon
-        if line.is_ring:
-            yield line
-        else:
-            inter = line.intersection(bbox)
-            points = line.intersection(bbox.exterior)
-            #: only add line to closing process if number of intersections
-            #: with bbox is even. Otherwise we have a incomplete coastline
-            #: which ends in the visible map
-            if points.geom_type == 'MultiPoint' and len(points) % 2 == 0:
-                if inter.geom_type == 'LineString':
-                    lines.append(inter)
-                else:
-                    lines.extend(inter)
-    #: close open lines
     minx, miny, maxx, maxy = bbox.bounds
     # bounds of the map as lines (beginning at the left top corner)
     blines_init = [
@@ -345,51 +335,49 @@ def close_coastlines(lines, bbox):
     #: sort the coastlines according to their position of their first
     #: intersection with the bounding box in clockwise direction
     for line in lines:
-        line.angle = point_radians(Point(line.coords[0]), centroid)
-    lines = list(sorted(lines, key=lambda l: l.angle, reverse=True))
+        line.angle = azimuth(centroid, Point(line.coords[0]))
+    lines = list(sorted(lines, key=lambda l: l.angle))
     # list containing all closed lines
-    areas = []
+    coastlines = []
     #: close and merge lines with bounding box in clockwise direction
     while lines:
-        area = []
-        cur = lines.pop()
-        area.extend(reversed(cur.coords))
-        #: end node is last coordinate of first line
-        end = Point(cur.coords[-1])
-        endrad = point_radians(end, centroid)
-        # end of line is always the first coordinate because we are merging
-        # in clockwise direction
-        prevend = Point(cur.coords[0])
+        coastline = []
+        cur = lines.pop(0)
+        coastline.extend(cur.coords)
+        # end node of this coastline is first coordinate of first line
+        end = Point(cur.coords[0])
+        prevend = Point(cur.coords[-1])
         # using deque because it can be rotated
         blines = collections.deque(blines_init)
+        # rotate until bounding line intersects end of first line
+        while not blines[0].intersects(prevend):
+            blines.rotate(1)
+        #: merge other lines and bounding lines until end of first
+        #: line is reached
         while True:
-            prevrad = point_radians(prevend, centroid)
+            prevangle = azimuth(centroid, prevend)
             for bline in blines:
                 if bline.intersects(prevend):
                     break
-            lnext = False
-            #: search for coastline that is next to previos line end and
-            #: on the same bounding box line
+            next_line = False
             for line in lines:
-                lp = Point(line.coords[-1])
-                if bline.intersects(lp) \
-                        and prevrad >= point_radians(lp, centroid):
-                    area.extend(reversed(line.coords))
-                    prevend = Point(line.coords[0])
+                if bline.intersects(Point(line.coords[0])) \
+                        and line.angle >= prevangle:
+                    coastline.extend(line.coords)
+                    prevend = Point(line.coords[-1])
                     lines.remove(line)
-                    lnext = True
+                    next_line = True
                     break
-            if bline.intersects(end) and endrad <= prevrad:
-                areas.append(area)
-                break
-            #: if there is no coastline next to previous line add corner of
-            #: current bounding box line to area
-            if not lnext:
-                area.append(bline.coords[-1])
-                prevend = Point(bline.coords[-1])
-                blines.rotate(-1)
-    for area in areas:
-        # make sure that coastline is a closed path by converting it to
-        # a polygon
-        yield Polygon(area).exterior
+            if not next_line:
+                if bline.intersects(end):
+                    coastlines.append(coastline)
+                    break
+                else:
+                    prevend = Point(bline.coords[-1])
+                    coastline.append(bline.coords[-1])
+                    blines.rotate(-1)
+    for coastline in coastlines:
+        # make sure that coastline is a closed path by converting its
+        # coordinates to a polygon
+        yield Polygon(coastline).exterior
         

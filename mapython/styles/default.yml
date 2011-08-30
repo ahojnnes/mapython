@@ -19,7 +19,7 @@ ZOOMLEVELS:
     17: [65536, 9999999999999]
     
 MAP_BACKGROUND: 0.94 0.93 0.90
-SEA_COLOR: 0.67 0.79 0.89
+SEA_BACKGROUND: 0.67 0.79 0.89
 
 #: see http://wiki.openstreetmap.org/wiki/Key:TAGNAME
 POINT:

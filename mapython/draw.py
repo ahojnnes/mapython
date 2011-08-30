@@ -3,8 +3,8 @@ import math
 import cairo
 import numpy
 from shapely.geometry import Point, LineString, Polygon, box
-import projection
-import utils
+from mapython import projection
+from mapython import utils
 
 
 class Map(object):

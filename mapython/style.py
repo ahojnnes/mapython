@@ -5,7 +5,7 @@ import functools
 from collections import defaultdict
 import yaml
 import cairo
-import utils
+from mapython import utils
 
 
 FONT_WEIGHT = {
@@ -176,7 +176,7 @@ class StyleSheet(object):
                 doc = yaml.load(fobj)
             self.zoomlevels = doc['ZOOMLEVELS']
             self.map_background = parse_tuple(doc['MAP_BACKGROUND'])
-            self.sea_color = parse_tuple(doc['SEA_COLOR'])
+            self.sea_background = parse_tuple(doc['SEA_BACKGROUND'])
             for style in parse_yml(doc):
                 self.update(style)
                 

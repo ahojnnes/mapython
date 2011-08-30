@@ -7,10 +7,9 @@ import cairo
 import numpy
 from sqlalchemy import and_
 from shapely import wkb
-from shapely.ops import linemerge
-import utils
-from database import session, OSMPoint, OSMLine, OSMPolygon
-from style import StyleSheet
+from mapython import utils
+from mapython.database import session, OSMPoint, OSMLine, OSMPolygon
+from mapython.style import StyleSheet
 
 
 GEOM_TYPES = {
@@ -103,22 +102,44 @@ class Renderer(object):
         )).all()
         # only fill map with sea color if there is a at least one coastline
         if coastlines or coastpolygons:
-            # fill whole map with sea color
-            self.mapobj.draw_background(self.stylesheet.sea_color)
-            # 
             lines = tuple(wkb.loads(str(cl.geom.geom_wkb))
                 for cl in coastlines)
-            #: save all polygon coordinates as numpy arrays
-            polygons = []
-            for cp in coastpolygons:
-                polygons.append(
-                    numpy.array(wkb.loads(str(cp.geom.geom_wkb)).exterior))
-            for cl in utils.close_coastlines(lines, self.bbox):
-                polygons.append(numpy.array(cl.coords))
-            #: fill land filled area with map background
-            for coords in polygons:
+            merged = utils.merge_lines(lines)
+            islands = []
+            shorelines = []
+            for line in merged:
+                #: closed rings are islands and must be filled with map background
+                if line.is_ring:
+                    islands.append(line)
+                else:
+                    inter = line.intersection(self.mapobj.bbox)
+                    points = line.intersection(self.mapobj.bbox.exterior)
+                    #: only add line to closing process if number of intersections
+                    #: with bbox is even. Otherwise we have a incomplete coastline
+                    #: which ends in the visible map
+                    if points.geom_type == 'MultiPoint' and len(points) % 2 == 0 \
+                            and len(points) > 0:
+                        if inter.geom_type == 'LineString':
+                            shorelines.append(inter)
+                        else:
+                            shorelines.extend(inter)
+            #: save all polygon coordinates as numpy arrays and add to islands
+            for island in coastpolygons:
+                islands.append(numpy.array(wkb.loads(str(island.geom.geom_wkb)).exterior))
+            #: fill water with sea background
+            shore = None
+            for shore in utils.close_coastlines(shorelines, self.mapobj.bbox):
                 self.mapobj.draw_polygon(
-                    exterior=coords,
+                    exterior=numpy.array(shore),
+                    background_color=self.stylesheet.sea_background
+                )
+            #: fill map with sea background if there is no shoreline
+            if shore is None:
+                self.mapobj.draw_background(self.stylesheet.sea_background)
+            #: fill land filled area with map background
+            for island in islands:
+                self.mapobj.draw_polygon(
+                    exterior=numpy.array(island),
                     background_color=self.stylesheet.map_background
                 )
 
