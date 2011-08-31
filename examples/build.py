@@ -19,7 +19,7 @@ mapobj.write()
 
 sty = StyleSheet('path-to-style-or-None')
 sty.add(Style('line', 3,
-    {'highway': 'motorway'}, 
+    {'highway': 'motorway'},
     {'color': (1, 1, 1, 0.3)}
 ))
 mapobj = Map('map.pdf', bbox, max_size=300, surface_type='pdf')

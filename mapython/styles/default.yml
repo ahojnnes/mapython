@@ -17,7 +17,7 @@ ZOOMLEVELS:
     15: [16384, 32768]
     16: [32768, 65536]
     17: [65536, 9999999999999]
-    
+
 MAP_BACKGROUND: 0.94 0.93 0.90
 SEA_BACKGROUND: 0.67 0.79 0.89
 
@@ -118,10 +118,10 @@ POINT:
                 text-halo-width: 1.5
                 font-size: 11
                 z-index: 92
-                
-                
+
+
 LINE:
-    highway: 
+    highway:
         motorway:
             - all:
                 color: 1 0.88 0.29
@@ -311,7 +311,7 @@ LINE:
                 text-halo-color: 1 1 1 0.8
             - 0:
                 width: 3
-                
+
     railway:
         rail:
             - all:
@@ -326,7 +326,7 @@ LINE:
                 line-dash: 6
                 border-width: 0.5
                 border-color: 0.7 0.7 0.7
-            
+
     waterway:
         river:
             - all:
@@ -361,7 +361,7 @@ LINE:
                 text-color: 0.23 0.38 0.51
                 text-halo-width: 1
                 text-halo-color: 1 1 1 0.7
-                
+
     boundary:
         administrative[admin_level=1]:
             - all:
@@ -375,7 +375,7 @@ LINE:
                 color: 0.5 0.5 0.5
                 width: 1.5
                 line-dash: 6 12
-                
+
     aeroway:
         runway:
             - 0-6:
@@ -391,14 +391,14 @@ LINE:
                 z-index: 92
             - 0-3:
                 width: 2
-                
+
 POLYGON:
     building:
         yes:
             - 0-4:
                 background-color: 0.87 0.86 0.83
                 z-index: 99
-                
+
     landuse:
         allotments, brownfield, cemetery, commercial, construction, garages: &landuse_default
             - 0, 1, 2:
@@ -427,7 +427,7 @@ POLYGON:
         village_green, recreation_ground:
             - all:
                 background-color: 0.7 0.8 0.6
-            
+
     leisure:
         sports_centre, golf_course, stadium, track, pitch:
             - 0-3:
@@ -435,7 +435,7 @@ POLYGON:
         nature_reserve, park, garden, common:
             - all:
                 background-color: 0.82 0.89 0.82
-            
+
     natural:
         beach:
             - all:
@@ -452,10 +452,10 @@ POLYGON:
         wood:
             - all:
                 background-color: 0.80 0.89 0.72
-                
+
     waterway:
         riverbank:
             - all:
                 background-color: 0.67 0.79 0.89
                 z-index: 98
-            
+

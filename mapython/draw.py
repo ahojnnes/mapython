@@ -8,10 +8,10 @@ from mapython import utils
 
 
 class Map(object):
-    
+
     '''
     Creates drawable map object which can be rendered.
-    
+
     :param fobj: a filename or writable file object
     :param bbox: iterable containing the max extents of the map in the
         following form: (minlon, minlat, maxlon, maxlat)
@@ -22,7 +22,7 @@ class Map(object):
         :mod:`mapython.projection`
     :param surface_type: must be one of png, pdf, ps or svg
     '''
-    
+
     SURFACE_TYPES = {
         # 'png':cairo.ImageSurface, => needs special treatment
         'pdf': cairo.PDFSurface,
@@ -31,7 +31,7 @@ class Map(object):
     }
     # margin around conflicting objects that may not overlap (text, icons etc.)
     CONFLICT_MARGIN = 3
-    
+
     def __init__(
         self,
         fobj,
@@ -61,7 +61,7 @@ class Map(object):
             # map hole where text can be drawn
             [self.map_area.exterior]
         )
-                
+
     def _init_coord_system(self):
         minlon, minlat, maxlon, maxlat = self.bbox.bounds
         #: convert to metres
@@ -77,7 +77,7 @@ class Map(object):
             self.x0 = maxx
         if miny < maxy:
             self.y0 = maxy
-            
+
     def _init_surface(self):
         #: calculate surface size in unit
         if self.x_diff > self.y_diff:
@@ -96,7 +96,7 @@ class Map(object):
         else:
             self.surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width,
                 self.height)
-                
+
     def _init_transformation(self):
         x_scale = self.width / self.x_diff # unit per metre
         y_scale = self.height / self.y_diff # unit per metre
@@ -110,18 +110,18 @@ class Map(object):
         dist = self.unit2m_matrix.transform_distance(math.sqrt(0.5),
             math.sqrt(0.5))
         self.scale = sum(dist) / 2
-        
+
     def draw_background(self, color):
         '''
         Fills the whole map with color.
-        
+
         :param color: ``(r, g, b[, a])``
         '''
-        
+
         self.context.rectangle(0, 0, self.width, self.height)
         self.context.set_source_rgba(*color)
         self.context.fill()
-        
+
     def draw_line(
         self,
         coords,
@@ -133,7 +133,7 @@ class Map(object):
     ):
         '''
         Draws a line.
-        
+
         :param coords: iterable containing all coordinates as ``(lon, lat)``
         :param color: ``(r, g, b[, a])``
         :param width: line-width in unit (pixel/point)
@@ -141,7 +141,7 @@ class Map(object):
         :param line_join: one of :const:`cairo.LINE_JOIN_*`
         :param line_dash: list/tuple used by :meth:`cairo.Context.set_dash`
         '''
-        
+
         #: move to first coords
         x, y = self.transform_coords(*coords[0])
         self.context.move_to(x, y)
@@ -156,9 +156,9 @@ class Map(object):
         self.context.set_line_join(line_join)
         self.context.set_dash(line_dash or tuple())
         self.context.stroke()
-        
+
     def draw_polygon(
-        self, 
+        self,
         exterior,
         interiors=None,
         background_color=(0, 0, 0, 0),
@@ -171,10 +171,10 @@ class Map(object):
     ):
         '''
         Draws a polygon.
-        
+
         :param exterior: iterable containing all exterior coordinates as
             ``(lon, lat)``
-        :param interiors: list/tuple with separate iterables containing 
+        :param interiors: list/tuple with separate iterables containing
             coordinates of the holes of the polygon as ``(lon, lat)``
         :param background_color: ``(r, g, b[, a])``
         :param background_image: file object or path to image file
@@ -185,7 +185,7 @@ class Map(object):
         :param border_line_dash: list/tuple used by
             :meth:`cairo.Context.set_dash`
         '''
-        
+
         polygons = (exterior, )
         if interiors is not None:
             polygons += interiors
@@ -231,7 +231,7 @@ class Map(object):
         '''
         Draws an arc. Angles are counted from the positive X axis
         to the positive Y axis.
-        
+
         :param coord: ``(lon, lat)``
         :param radius: as float in unit (pixel/point)
         :param angle1: start angle in radians [0, 2pi]
@@ -292,7 +292,7 @@ class Map(object):
         '''
         Draws text either centered on coordinate or the image centered on
         coordinate and text on the right of the image.
-        
+
         :param coord: ``(lon, lat)``
         :param text: text to be drawn
         :param color: ``(r, g, b[, a])``
@@ -300,7 +300,7 @@ class Map(object):
         :param font_family: font name
         :param font_style: ``cairo.FONT_SLANT_NORMAL``,
             ``cairo.FONT_SLANT_ITALIC`` or ``cairo.FONT_SLANT_OBLIQUE``
-        :param font_weight: ``cairo.FONT_WEIGHT_NORMAL`` or 
+        :param font_weight: ``cairo.FONT_WEIGHT_NORMAL`` or
             ``cairo.FONT_WEIGHT_BOLD``
         :param text_halo_width: border-width in unit (pixel/point)
         :param text_halo_color: ``(r, g, b[, a])``
@@ -313,7 +313,7 @@ class Map(object):
         :param image: file object or path to image file
         :param image_margin: space between text and image in int or float
         '''
-        
+
         x, y = self.transform_coords(*coord)
         # abort if there are already too many text_paths in this area
         if self.conflict_density(x, y) > 1:
@@ -355,7 +355,7 @@ class Map(object):
             newx += image_width + image_margin
             newy += (image_height + height) / 2.0
         else:
-            # find_free_position uses minx and miny as position but 
+            # find_free_position uses minx and miny as position but
             # cairo uses bottom left corner
             newx, newy = newx, newy + height + 2
         # abort if new position is too far away from original position
@@ -385,7 +385,7 @@ class Map(object):
         #: fill characters with color
         self.context.set_source_rgba(*color)
         self.context.fill()
-        
+
     def draw_text_on_line(
         self,
         coords,
@@ -405,7 +405,7 @@ class Map(object):
         '''
         Draws text on a line. Tries to find a position with the least change
         in gradient and which is closest to the middle of the line.
-        
+
         :param coords: iterable containing all coordinates as ``(lon, lat)``
         :param text: text to be drawn
         :param color: ``(r, g, b[, a])``
@@ -413,7 +413,7 @@ class Map(object):
         :param font_family: font name
         :param font_style: ``cairo.FONT_SLANT_NORMAL``,
             ``cairo.FONT_SLANT_ITALIC`` or ``cairo.FONT_SLANT_OBLIQUE``
-        :param font_weight: ``cairo.FONT_WEIGHT_NORMAL`` or 
+        :param font_weight: ``cairo.FONT_WEIGHT_NORMAL`` or
             ``cairo.FONT_WEIGHT_BOLD``
         :param text_halo_width: border-width in unit (pixel/point)
         :param text_halo_color: ``(r, g, b[, a])``
@@ -424,12 +424,12 @@ class Map(object):
         :param text_transform: one of ``'lowercase'``, ``'uppercase'`` or
             ``'capitalize'``
         '''
-        
+
         text = text.strip()
         if not text:
             return
         coords = map(lambda c: self.transform_coords(*c), coords)
-        
+
         self.context.select_font_face(font_family, font_style, font_weight)
         self.context.set_font_size(font_size)
         text = utils.text_transform(text, text_transform)
@@ -496,15 +496,15 @@ class Map(object):
         #: fill actual text
         self.context.set_source_rgba(*color)
         self.context.fill()
-        
+
     def draw_image(self, coord, image):
         '''
         Draws an image at given position (centered). Only supports pngs so far.
-        
+
         :param coord: ``(lon, lat)``
         :param image: file object or path to image file
         '''
-        
+
         image = cairo.ImageSurface.create_from_png(image)
         x, y = self.transform_coords(*coord)
         width, height = image.get_width(), image.get_height()
@@ -520,48 +520,48 @@ class Map(object):
         self.context.paint()
         self.conflict_area = self.conflict_area.union(
             box(x, y, x + width, y + height))
-            
+
     def transform_coords(self, lon, lat):
         '''
         Transforms from ``(lon, lat)`` to ``(x, y)`` in unit (pixel or point).
-        
+
         :param lon: longitude in degree
         :param lat: latitude in degree
-        
+
         :returns: (x, y) tuple in unit (pixel or point)
         '''
-        
+
         x, y = self.projection(lon, lat)
         x_rel, y_rel = x - self.x0, self.y0 - y
         return self.m2unit_matrix.transform_point(x_rel, y_rel)
-        
+
     def transform_coords_inverse(self, x, y):
         '''
         Transforms from ``(x, y)`` in unit (pixel or point) to ``(lon, lat)``.
-        
+
         :param x: in unit (pixel or point)
         :param y: in unit (pixel or point)
-        
+
         :returns: (lon, lat) tuple in degrees
         '''
-        
+
         x, y = self.unit2m_matrix.transform_point(x, y)
         x_abs, y_abs = x + self.x0, self.y0 - y
         return self.projection(x_abs, y_abs, inverse=True)
-        
+
     def find_free_position(self, polygon, number=10, step=4):
         '''
         Checks for collisions with self.conflict_area and in case returns
         nearest x, y coord-tuple (minx, miny) where the given polygon does not
         collide with self.conflict_area. Only tries to move polygon a certain
         times and returns None if no free position could be found.
-        
+
         :param polygon: :class:`shapely.geometry.Polygon`
         :param number: the number of movements as int or float
         :param step: int or float specifying the step which the polygon is moved
             at each iteration
         '''
-        
+
         # minx, miny
         x, y = polygon.bounds[:2]
         # only try to shift text 10 times, otherwise it will be too far away
@@ -586,16 +586,16 @@ class Map(object):
             polygon = best_polygon
             x += bestdx
             y += bestdy
-        
+
     def conflict_density(self, x, y, radius=90):
         '''
         Counts all areas which intersect a certain area (defined by radius).
-        
+
         :param x: x-position in unit (pixel/point)
         :param y: y-position in unit (pixel/point)
         :param radius: buffer size around point as int or float
         '''
-        
+
         density_area = Point(x, y).buffer(radius)
         # only MultiPolygon and GeometryCollection have geoms-attribute
         if self.conflict_area.geom_type in ('MultiPolygon',
@@ -610,10 +610,10 @@ class Map(object):
         elif self.conflict_area.intersects(density_area):
             return 1
         return 0
-        
+
     def write(self):
         '''Writes surface to file object.'''
-        
+
         if self.surface_type == 'png':
             self.surface.write_to_png(self.fobj)
         else:

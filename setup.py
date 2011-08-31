@@ -5,12 +5,12 @@ from setuptools import setup
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
-    
+
 setup(
     name='mapython',
     version='0.5',
     license='MIT',
-    
+
     description=('mapython is a map renderer for OpenStreetMap'),
     long_description=read('README'),
     keywords='OpenStreetMap render map',
@@ -26,10 +26,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
     ],
-    
+
     author='Johannes Schönberger',
     author_email='johannes.schoenberger@tum.de',
-    
+
     packages=['mapython'],
     scripts=['scripts/generate_tiles.py'],
     install_requires=[

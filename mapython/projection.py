@@ -48,4 +48,3 @@ cassini = pyproj.Proj('''
     +no_defs
 ''')
 '''Cassini projection, see http://spatialreference.org/ref/esri/53028/'''
-    

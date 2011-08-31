@@ -13,14 +13,14 @@ MERC_GLOBAL_BBOX = (-20037508.34, -20037508.34, 20037508.34, 20037508.34)
 
 
 class Generator(multiprocessing.Process):
-    
+
     queue = multiprocessing.JoinableQueue()
     stop = multiprocessing.Event()
-    
+
     def __init__(self):
         multiprocessing.Process.__init__(self)
         self.renderer = Renderer
-    
+
     def run(self):
         while not self.stop.is_set():
             try:
@@ -34,8 +34,8 @@ class Generator(multiprocessing.Process):
                 map_obj.write()
                 self.queue.task_done()
                 print 'Built %s' % str(map_obj.fobj)
-                
-                
+
+
 def iter_tile_maps(bbox, path, level, width, height):
     try:
         os.mkdir(os.path.join(path, str(level)))
@@ -78,7 +78,7 @@ def iter_tile_maps(bbox, path, level, width, height):
             tilepath = os.path.join(path, str(level), str(indexx),
                 str(indexy) + '.png')
             yield tilepath, tilebbox, max(width, height)
-            
+
 def build_tiles(bbox, path, level, width=256, height=256, process_number=3):
     '''
     Builds and renders map tiles.
@@ -99,7 +99,7 @@ def build_tiles(bbox, path, level, width=256, height=256, process_number=3):
     # wait until all processes terminate
     for generator in generators:
         generator.join()
-        
+
 def parse_options():
     parser = optparse.OptionParser()
     parser.add_option('--path', dest='path',
@@ -135,8 +135,8 @@ def parse_options():
             options.zoomlevels.split(',')))
         return options
     print 'usage error: missing arguments, see ``-h | --help``'
-    
-        
+
+
 if __name__ == '__main__':
     options = parse_options()
     if options is not None:
@@ -154,4 +154,3 @@ if __name__ == '__main__':
         for level in options.zoomlevels:
             build_tiles(bbox, options.path, level, options.width,
                 options.height, options.process_number)
-        

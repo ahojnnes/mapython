@@ -25,15 +25,15 @@ BBOX_QUERY_COND = "(%s.way && SetSRID('BOX3D(%s %s, %s %s)'::box3d, 4326))"
 
 
 class Renderer(object):
-    
+
     '''
     Fetches data from database and renders a map.
-    
+
     :param mapobj: :class:`mapython.draw.Map`
     :param stylesheet: :class:`mapython.style.StyleSheet`
     :param quiet: specify whether some status information is printed
     '''
-    
+
     def __init__(
         self,
         mapobj,
@@ -57,41 +57,42 @@ class Renderer(object):
             'Zoomlevel:',
             self.stylesheet.get_level(self.mapobj.scale)
         )
-                
+
     def run(self):
         '''
         Runs all rendering processes and draws the different layers in the
         correct order:
-        
+
             0. map background
             1. coastlines
             2. polygons
             3. lines
             4. points
             5. conflicts (text, images etc.)
-            
+
         '''
+
         self.mapobj.draw_background(self.stylesheet.map_background)
         self.coastlines()
         self.polygons()
         self.lines()
         self.points()
         self.conflicts()
-        
+
     def verbose_print(self, *args):
         if not self.quiet:
             for msg in args:
                 print msg,
             print
-        
+
     def coastlines(self):
         '''
         Draws coastlines on the map.
-        
+
         TODO: fill map with sea color if no coastline intersects the map but
             the area actually is no land mass
         '''
-        
+
         coastlines = session.query(OSMLine).filter(and_(
             BBOX_QUERY_COND % ((OSMLine.__table__, ) + self.mapobj.bbox.bounds),
             OSMLine.natural=='coastline'
@@ -145,7 +146,7 @@ class Renderer(object):
 
     def polygons(self):
         '''Draws polygons on the map.'''
-        
+
         results = self.query_objects('polygon')
         for polygons in results:
             for polygon in polygons:
@@ -174,7 +175,7 @@ class Renderer(object):
 
     def lines(self):
         '''Draws lines on the map.'''
-        
+
         results = self.query_objects('line')
         for lines in results:
             #: draw outline
@@ -222,10 +223,10 @@ class Renderer(object):
             for line in lines:
                 if line.style.get('text') is not None:
                     self.conflict_list.append(line)
-                
+
     def points(self):
         '''Draws points on the map.'''
-        
+
         results = self.query_objects('point')
         for points in results:
             for point in points:
@@ -251,7 +252,7 @@ class Renderer(object):
                             cairo.LINE_JOIN_ROUND),
                         border_line_dash=point.style.get('border-line-dash')
                     )
-                    
+
     def conflicts(self):
         '''
         Draws all conflicting objects on the map. Conflicting objects are all
@@ -259,6 +260,7 @@ class Renderer(object):
         images. These objects are rendered in reverse order so objects with
         higher z-index are more likely drawn.
         '''
+
         # render text in reversed order so points are rendered before
         # lines before polygons
         for obj in reversed(self.conflict_list):
@@ -321,17 +323,18 @@ class Renderer(object):
                     text_halo_line_dash=obj.style.get('text-halo-line-dash'),
                     text_transform=obj.style.get('text-transform'),
                 )
-                
+
     def query_objects(self, geom_type):
         '''
         Returns all objects for current scale/geom_type as a 2-dimensional
         sorted list (according to z-index specified in stylesheet) and sets
         style as attribute to db objects.
-        
+
         :param geom_type: one of ``'point'``, ``'line'`` or ``'polygon'``
-        
+
         :returns: 2-dimensional list containing sorted objects
         '''
+
         # create 2-dimensional list so objects can be sorted (may be too many
         # sublists as there probably won't be as many z-index's defined as
         # MAX_Z_INDEX)
@@ -360,16 +363,17 @@ class Renderer(object):
                 results[obj.style.get('z-index', 0)].append(obj)
         self.verbose_print('>  %s %ss' % (counter, geom_type))
         return results
-        
+
     def iter_query_conditions(self, geom_type):
         '''
         Yields tags, columns and conditions for the current scale.
-        
+
         :param geom_type: one of ``'point'``, ``'line'`` or ``'polygon'``
-        
+
         :yields: ``[tags,]``, ``[columns,]``,
             ``[sqlalchemy binary expressions,]``
         '''
+
         db_class = GEOM_TYPES[geom_type]
         # only one condition so it can be combined with others to get better
         # performance
@@ -400,4 +404,4 @@ class Renderer(object):
                 tags.append(key)
                 query_conds.append(getattr(db_class, key)==value)
             yield tags, columns[utils.dict2key(conds)], query_conds
-            
+
