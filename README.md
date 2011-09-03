@@ -1,4 +1,5 @@
 mapython is a toolkit for rendering maps based on OpenStreetMap data. It is released under the MIT license and is entirely written in Python.
+
 Usage
 =====
 
