@@ -125,12 +125,14 @@ LINE:
         motorway:
             - all:
                 color: 1 0.88 0.29
-                width: 0.7
-                border-width: 1
                 border-color: 0.89 0.31 0.31
                 outline-width: 0.7
                 outline-color: 0.67 0.32 0.4
                 z-index: 99
+            - 8, 9:
+                width: 0.5
+                border-width: 0.7
+                outline-width: 0.5
             - 5-7:
                 width: 1
                 border-width: 1
@@ -148,12 +150,15 @@ LINE:
                 border-width: 2.5
                 outline-width: 2.5
         motorway_link:
-            - 0-7:
+            - 0-9:
                 color: 0.89 0.31 0.31
                 width: 0.7
-                border-width: 1
+                border-width: 0.5
                 border-color: 0.67 0.32 0.4
                 z-index: 95
+            - 7:
+                width: 0.7
+                border-width: 1
             - 2-6:
                 width: 1.5
             - 0, 1:
@@ -161,10 +166,13 @@ LINE:
         trunk, trunk_link:
             - 0-9:
                 color: 0.88 0.65 0.65
-                width: 1
-                border-width: 0.7
+                width: 0.7
+                border-width: 0.5
                 border-color: 0.68 0.34 0.34
                 z-index: 98
+            - 7:
+                width: 1
+                border-width: 0.7
             - 4-6:
                 width: 1.5
             - 0-3:
@@ -177,13 +185,16 @@ LINE:
         primary, primary_link:
             - 0-9:
                 color: 0.98 0.88 0.58
-                width: 1
+                width: 0.7
                 border-color: 0.85 0.62 0.16
-                border-width: 0.7
+                border-width: 0.5
                 z-index: 97
+            - 7:
+                width: 1
+                border-width: 0.7
             - 0-6:
                 width: 1.5
-            - 0-4:
+            - 0-5:
                 font-size: 9
                 text: name
                 text-color: 0.35 0.19 0.09
@@ -200,13 +211,16 @@ LINE:
         secondary, secondary_link:
             - 0-9:
                 color: 1 0.99 0.68
-                width: 1
+                width: 0.7
                 border-color: 0.88 0.8 0.73
-                border-width: 0.7
+                border-width: 0.5
                 z-index: 96
+            - 7:
+                width: 1
+                border-width: 0.7
             - 0-6:
                 width: 1.5
-            - 0-4:
+            - 0-5:
                 font-size: 9
                 text: name
                 text-color: 0.45 0.34 0.16
@@ -361,20 +375,6 @@ LINE:
                 text-color: 0.23 0.38 0.51
                 text-halo-width: 1
                 text-halo-color: 1 1 1 0.7
-
-    boundary:
-        administrative[admin_level=1]:
-            - all:
-                color: 0.5 0.5 0.5
-                width: 1.5
-                line-dash: 6 12
-                border-width: 1
-                border-color: 1 0.99 0.54
-        administrative[admin_level=2]:
-            - 0-9:
-                color: 0.5 0.5 0.5
-                width: 1.5
-                line-dash: 6 12
 
     aeroway:
         runway:
