@@ -29,8 +29,6 @@ class Map(object):
         'ps': cairo.PSSurface,
         'svg': cairo.SVGSurface,
     }
-    # margin around conflicting objects that may not overlap (text, icons etc.)
-    CONFLICT_MARGIN = 3
 
     def __init__(
         self,
@@ -55,12 +53,7 @@ class Map(object):
         self._init_transformation()
         self.context = cairo.Context(self.surface)
         self.map_area = box(0, 0, self.width, self.height)
-        self.conflict_area = Polygon(
-            # buffer around map where no text should be drawn
-            self.map_area.buffer(99999).exterior,
-            # map hole where text can be drawn
-            [self.map_area.exterior]
-        )
+        self.conflict_area = Polygon()
 
     def _init_coord_system(self):
         minlon, minlat, maxlon, maxlat = self.bbox.bounds
@@ -316,7 +309,7 @@ class Map(object):
 
         x, y = self.transform_coords(*coord)
         # abort if there are already too many text_paths in this area
-        if self.conflict_density(x, y) > 1:
+        if self.conflict_density(x, y) > 0.07:
             self.context.new_path()
             return
         text = utils.text_transform(text, text_transform)
@@ -376,10 +369,9 @@ class Map(object):
         #: determine covered area by text
         area = box(*self.context.path_extents())
         if image is not None:
-            area = area.union(image_area.buffer(self.CONFLICT_MARGIN, 1))
+            area = area.union(image_area)
         try:
-            self.conflict_area = self.conflict_area.union(
-                area.buffer(self.CONFLICT_MARGIN, 1))
+            self.conflict_union(area)
         except ValueError: # empty geometry
             pass
         #: fill characters with color
@@ -483,8 +475,8 @@ class Map(object):
                 self.context.close_path()
         #: only add line to reserved area if text was drawn
         if char_coords is not None:
-            covered = line.buffer(height + self.CONFLICT_MARGIN)
-            self.conflict_area = self.conflict_area.union(covered)
+            covered = line.buffer(height)
+            self.conflict_union(covered)
         #: draw border around characters
         self.context.set_line_cap(cairo.LINE_CAP_ROUND)
         self.context.set_source_rgba(*text_halo_color)
@@ -518,8 +510,7 @@ class Map(object):
             return
         self.context.set_source_surface(image, x, y)
         self.context.paint()
-        self.conflict_area = self.conflict_area.union(
-            box(x, y, x + width, y + height))
+        self.conflict_union(box(x, y, x + width, y + height))
 
     def transform_coords(self, lon, lat):
         '''
@@ -569,7 +560,12 @@ class Map(object):
         shifts = ((step, 0), (0, step), (-step, 0), (0, -step))
         for _ in xrange(number):
             # only shift if cur area does not collide with self.area
-            if not polygon.intersects(self.conflict_area):
+            minx, miny, maxx, maxy = polygon.bounds
+            if (
+                (minx > 0 and miny > 0 and maxx < self.width
+                    and maxy < self.height)
+                and not polygon.intersects(self.conflict_area)
+            ):
                 return x, y
             cur_area = polygon.intersection(self.conflict_area).area
             bestdx = bestdy = 0
@@ -587,29 +583,31 @@ class Map(object):
             x += bestdx
             y += bestdy
 
-    def conflict_density(self, x, y, radius=90):
+    def conflict_union(self, geom, margin=3):
         '''
-        Counts all areas which intersect a certain area (defined by radius).
+        Unites geometry with conflict area and adds buffer around geometry.
+
+        :param geom: any of :class:`shapely.geometry.*`
+        '''
+
+        self.conflict_area = self.conflict_area.union(
+            geom.buffer(margin, 2))
+
+    def conflict_density(self, x, y, radius=60):
+        '''
+        Calculates ratio of intersection with conflicts and buffer around
+        given coordinates.
 
         :param x: x-position in unit (pixel/point)
         :param y: y-position in unit (pixel/point)
         :param radius: buffer size around point as int or float
+
+        :returns: ratio between 0 and 1
         '''
 
         density_area = Point(x, y).buffer(radius)
-        # only MultiPolygon and GeometryCollection have geoms-attribute
-        if self.conflict_area.geom_type in ('MultiPolygon',
-            'GeometryCollection'
-        ):
-            density = 0
-            for area in self.conflict_area.geoms:
-                if density_area.intersects(area):
-                    density += 1
-            return density
-        # self.area.geom_type is Polygon
-        elif self.conflict_area.intersects(density_area):
-            return 1
-        return 0
+        density_intersection = self.conflict_area.intersection(density_area)
+        return density_intersection.area / density_area.area
 
     def write(self):
         '''Writes surface to file object.'''
