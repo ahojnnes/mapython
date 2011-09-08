@@ -1,7 +1,8 @@
 # coding: utf-8
 import unittest
 import tempfile
-
+import os
+import cairo
 from shapely.geometry import box
 
 import mapython.draw
@@ -15,9 +16,10 @@ class MapTestCase(unittest.TestCase):
     def setUp(self):
         self.bbox = (11, 45.5, 11.232, 45.7)
         self.tempfile = tempfile.TemporaryFile()
-        self.map = mapython.draw.Map(tempfile.TemporaryFile(), self.bbox, 800)
+        self.map = mapython.draw.Map(self.tempfile, self.bbox, 800)
 
     def tearDown(self):
+        self.map.write()
         self.tempfile.close()
 
     def test_projection(self):
@@ -54,6 +56,92 @@ class MapTestCase(unittest.TestCase):
             None)
         new = box(30, 30, 50, 30)
         self.assertEqual(self.map.find_free_position(new, number=0), (30, 30))
+
+    def test_draw(self):
+        self.map.draw_background((0, 0, 0, 1))
+        self.map.draw_line(
+            coords=((11, 45.5), (11.1, 45.6), (11.2, 45.65)),
+            color=(1, 1, 1, 0.5),
+            width=3,
+            line_cap=cairo.LINE_CAP_SQUARE,
+            line_join=cairo.LINE_JOIN_ROUND,
+            line_dash=(3, 4, 2)
+        )
+        self.map.draw_polygon(
+            exterior=((11, 45.5), (11.1, 45.6), (11.2, 45.65), (11, 45.5)),
+            interiors=(
+                ((11.1, 45.6), (11.12, 45.6), (11.14, 45.65), (11.1, 45.6)),
+            ),
+            background_color=(1, 1, 1, 0.5),
+            border_width=1,
+            border_color=(1, 1, 1, 1),
+            border_line_cap=cairo.LINE_CAP_ROUND,
+            border_line_join=cairo.LINE_JOIN_ROUND,
+            border_line_dash=None
+        )
+        self.map.draw_arc(
+            coord=(11.2, 45.6),
+            radius=20,
+            angle1=1,
+            angle2=3,
+            background_color=(0, 0, 0, 0),
+            background_image=None,
+            border_width=0,
+            border_color=(1, 1, 1, 1),
+            border_line_cap=cairo.LINE_CAP_ROUND,
+            border_line_join=cairo.LINE_JOIN_ROUND,
+            border_line_dash=(3, 4, 2)
+        )
+        self.map.draw_text(
+            coord=(11.2, 45.6),
+            text='TEST',
+            color=(0, 0, 0),
+            font_size=11,
+            font_family='Tahoma',
+            font_style=cairo.FONT_SLANT_NORMAL,
+            font_weight=cairo.FONT_WEIGHT_NORMAL,
+            text_halo_width=4,
+            text_halo_color=(1, 1, 1, 0.5),
+            text_halo_line_cap=cairo.LINE_CAP_ROUND,
+            text_halo_line_join=cairo.LINE_JOIN_ROUND,
+            text_halo_line_dash=None,
+            text_transform=None,
+        )
+        image = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+            'files/icon.png')
+        self.map.draw_text(
+            coord=(11.2, 45.6),
+            text='TEST',
+            color=(0, 0, 0),
+            font_size=11,
+            font_family='Tahoma',
+            font_style=cairo.FONT_SLANT_NORMAL,
+            font_weight=cairo.FONT_WEIGHT_NORMAL,
+            text_halo_width=4,
+            text_halo_color=(1, 1, 1, 0.5),
+            text_halo_line_cap=cairo.LINE_CAP_ROUND,
+            text_halo_line_join=cairo.LINE_JOIN_ROUND,
+            text_halo_line_dash=None,
+            text_transform=None,
+            image=image,
+            image_margin=4
+        )
+        self.map.draw_text_on_line(
+            coords=((11, 45.5), (11.232, 45.7)),
+            text='Test Street 123a',
+            color=(0, 0, 0),
+            font_size=10,
+            font_family='Tahoma',
+            font_style=cairo.FONT_SLANT_NORMAL,
+            font_weight=cairo.FONT_WEIGHT_NORMAL,
+            text_halo_width=1,
+            text_halo_color=(1, 1, 1),
+            text_halo_line_cap=cairo.LINE_CAP_ROUND,
+            text_halo_line_join=cairo.LINE_JOIN_ROUND,
+            text_halo_line_dash=None,
+            text_transform=None,
+        )
+        self.map.draw_image((11.2, 45.6), image)
 
 
 def suite():
