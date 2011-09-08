@@ -548,7 +548,7 @@ class Map(object):
             at each iteration
         '''
 
-        # minx, miny
+        number += 1
         x, y = polygon.bounds[:2]
         # list containing all "visited" bounds
         prev_bounds = []
@@ -558,8 +558,7 @@ class Map(object):
             # only shift if cur area does not collide with self.area
             # and is within visual map
             if (
-                (minx > 0 and miny > 0 and maxx < self.width
-                    and maxy < self.height)
+                polygon.within(self.map_area)
                 and polygon.intersection(self.conflict_area).area == 0
             ):
                 return x, y
@@ -572,8 +571,7 @@ class Map(object):
                 shifted = Polygon(tuple(coords))
                 minx, miny, maxx, maxy = shifted.bounds
                 # position already "visited" or not within visual map
-                if shifted.bounds in prev_bounds or (minx < 0 and miny < 0
-                        and maxx > self.width and maxy > self.height):
+                if shifted.bounds in prev_bounds or not shifted.within(self.map_area):
                     continue
                 shifted_area = shifted.intersection(self.conflict_area).area
                 if shifted_area <= cur_area:
