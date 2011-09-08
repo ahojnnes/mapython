@@ -329,12 +329,7 @@ class Map(object):
         else:
             # place text directly on coord
             x -= width / 2.0
-            text_area = box(
-                x - 2,
-                y - height / 2. - 2,
-                x + 2 + width,
-                y + height / 2. + 2
-            )
+            text_area = box(x, y - height / 2., x + width, y + height / 2.)
         try:
             newx, newy = self.find_free_position(text_area)
         except TypeError: # no free position found
@@ -350,7 +345,7 @@ class Map(object):
         else:
             # find_free_position uses minx and miny as position but
             # cairo uses bottom left corner
-            newx, newy = newx, newy + height + 2
+            newx, newy = newx, newy + height
         # abort if new position is too far away from original position
         if Point(newx, newy).distance(Point(x, y)) > 0.1 * self.max_size:
             self.context.new_path()
@@ -504,7 +499,7 @@ class Map(object):
         x -= width / 2.0
         y -= height / 2.0
         newpos = self.find_free_position(
-            box(x - 2, y - 2, x + width + 2, y + height + 2)
+            box(x, y, x + width, y + height)
         )
         if newpos is None:
             return
@@ -540,7 +535,7 @@ class Map(object):
         x_abs, y_abs = x + self.x0, self.y0 - y
         return self.projection(x_abs, y_abs, inverse=True)
 
-    def find_free_position(self, polygon, number=10, step=4):
+    def find_free_position(self, polygon, number=10, step=5):
         '''
         Checks for collisions with self.conflict_area and in case returns
         nearest x, y coord-tuple (minx, miny) where the given polygon does not
@@ -555,35 +550,42 @@ class Map(object):
 
         # minx, miny
         x, y = polygon.bounds[:2]
-        # only try to shift text 10 times, otherwise it will be too far away
-        # either
+        # list containing all "visited" bounds
+        prev_bounds = []
         shifts = ((step, 0), (0, step), (-step, 0), (0, -step))
         for _ in xrange(number):
-            # only shift if cur area does not collide with self.area
             minx, miny, maxx, maxy = polygon.bounds
+            # only shift if cur area does not collide with self.area
+            # and is within visual map
             if (
                 (minx > 0 and miny > 0 and maxx < self.width
                     and maxy < self.height)
-                and not polygon.intersects(self.conflict_area)
+                and polygon.intersection(self.conflict_area).area == 0
             ):
                 return x, y
             cur_area = polygon.intersection(self.conflict_area).area
             bestdx = bestdy = 0
             best_polygon = polygon
-            #: shift polygon in all directions and search for min intersection
+            #: shift polygon in all directions and search for minimum intersection
             for dx, dy in shifts:
                 coords = utils.translate_coords(polygon.exterior.coords, dx, dy)
                 shifted = Polygon(tuple(coords))
+                minx, miny, maxx, maxy = shifted.bounds
+                # position already "visited" or not within visual map
+                if shifted.bounds in prev_bounds or (minx < 0 and miny < 0
+                        and maxx > self.width and maxy > self.height):
+                    continue
                 shifted_area = shifted.intersection(self.conflict_area).area
-                if shifted_area < cur_area:
+                if shifted_area <= cur_area:
                     best_polygon = shifted
                     cur_area = shifted_area
                     bestdx, bestdy = dx, dy
             polygon = best_polygon
             x += bestdx
             y += bestdy
+            prev_bounds.append(polygon.bounds)
 
-    def conflict_union(self, geom, margin=3):
+    def conflict_union(self, geom, margin=4):
         '''
         Unites geometry with conflict area and adds buffer around geometry.
 
