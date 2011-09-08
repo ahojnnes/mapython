@@ -3,5 +3,5 @@
 *.pyo
 *.egg-info
 *.sublime-*
-test*
+test/*
 docs/_build
