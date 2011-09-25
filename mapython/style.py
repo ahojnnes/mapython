@@ -129,6 +129,7 @@ class Style(object):
         self.attrs[key] = value
 
     def __getattr__(self, name):
+        print name
         if name == 'tags':
             return self.__dict__[name]
         try:
@@ -164,16 +165,22 @@ class StyleSheet(object):
 
     MAX_Z_INDEX = 999
 
-    def __init__(self, path=None):
+    def __init__(self, stylesheet=None):
         self._last_scale = self._last_level = None
         # dict structure: styles[level][geom_type][(tag=name,)] = Style
         self.styles = defaultdict(lambda: defaultdict(dict))
         self.zoomlevels = {}
         self.dirname = None
-        if path is not None:
-            self.dirname = os.path.dirname(os.path.abspath(path))
-            with open(path, 'r') as fobj:
-                doc = yaml.load(fobj)
+        if stylesheet is not None:
+            if (
+                (isinstance(stylesheet, str) or isinstance(stylesheet, unicode))
+                and os.path.isfile(stylesheet)
+            ):
+                self.dirname = os.path.dirname(os.path.abspath(stylesheet))
+                with open(stylesheet, 'r') as fobj:
+                    doc = yaml.load(fobj)
+            else:
+                doc = yaml.load(stylesheet)
             self.zoomlevels = doc['ZOOMLEVELS']
             self.map_background = parse_tuple(doc['MAP_BACKGROUND'])
             self.sea_background = parse_tuple(doc['SEA_BACKGROUND'])
