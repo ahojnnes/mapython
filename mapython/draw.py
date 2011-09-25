@@ -160,7 +160,7 @@ class Map(object):
         border_color=(1, 1, 1, 1),
         border_line_cap=cairo.LINE_CAP_ROUND,
         border_line_join=cairo.LINE_JOIN_ROUND,
-        border_line_dash=None,
+        border_line_dash=None
     ):
         '''
         Draws a polygon.

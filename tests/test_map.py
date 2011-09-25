@@ -2,6 +2,7 @@
 import unittest
 import tempfile
 import os
+import StringIO
 import cairo
 from shapely.geometry import box
 
@@ -9,6 +10,21 @@ import mapython.draw
 
 
 PLACES = 9
+
+ICON = """iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAA
+HK8AAByvAZ7yuRcAAAAJdnBBZwAAACAAAAAgAIf6nJ0AAAIeSURBVEjHrZVPaBNBFIe/2SSbxnpI
+LbWISC0aG/G/B8FTEa2CiAoqCiJ4qQgiHrx78epFvApeerLmUJFKUZBe0lZEIwW9WJAKjfSgEtqk
+ZLfzeug27mw3ic36HnPY3Xnf/N6btzOQZpACS+gNeonXDGDDXb6hkRbcYZx+xXd6aNUchhUa1TIA
+ZqxI4dBuRQoHiQog7n9QNOMt1wckyXKULmINwh2KfGAGdz0gxVVukyVl1FS8obyhWeQTTxjFMQEW
+p3hAL5qyIbKNZG3tCoKinZN0Ms+ECUhziZ0I73hBpaZB2MdNuoAyw4yjgQyD7OcCBSo+nZKRvIgs
+yX2xjGbtkykREfkhZ7w3PZIXkRHpXpszZwHYtDXdLn9tUiSCRVRAgrNUAin0AtDJdXYgCLvZFcDF
+/9bbop9jaN9KSa+IKa5xEQnVajRSjM11Ekj4RJv2f1pZG8JXrcw0X4hxiL3YzQAlfq4LH+ItW3EZ
+5QrnAwmIr93iAPPkOMx235Qp3nCDLDDBc/ZwwAB0cIRt/GKW5VWAQw7NObq97RFGyJLhIVu4Q54c
+fwL6LuPylWf8XtuFEkO8ZFMNUOYeLkUcQPOYpwZAYaGosuDNDvUTMikfZVrG5GCjk3lOIeHVTXKc
+Aaq8ohByjNSsWBcAYCO+Pz8cEG/0tUpzi9qJymqUwj/YosVshHCH9zE0faRbup9cJnkEHdziM9UN
+380LjHEaewVIlxj5M6YPzwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxMC0wMS0wNVQxOTozNDo0Ny0w
+NzowMFcyxLQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTAtMDEtMDVUMTk6MzQ6NDctMDc6MDAmb3wI
+AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAABJRU5ErkJggg=="""
 
 
 class MapTestCase(unittest.TestCase):
@@ -52,8 +68,7 @@ class MapTestCase(unittest.TestCase):
         new = box(10, 10, 50, 30)
         self.assertEqual(self.map.find_free_position(new, step=1, number=10),
             (10, 20))
-        self.assertEqual(self.map.find_free_position(new, step=1, number=5),
-            None)
+        self.assertIsNone(self.map.find_free_position(new, step=1, number=5))
         new = box(30, 30, 50, 30)
         self.assertEqual(self.map.find_free_position(new, number=0), (30, 30))
 
@@ -107,8 +122,6 @@ class MapTestCase(unittest.TestCase):
             text_halo_line_dash=None,
             text_transform=None,
         )
-        image = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-            'files/icon.png')
         self.map.draw_text(
             coord=(11.2, 45.6),
             text='TEST',
@@ -123,7 +136,7 @@ class MapTestCase(unittest.TestCase):
             text_halo_line_join=cairo.LINE_JOIN_ROUND,
             text_halo_line_dash=None,
             text_transform=None,
-            image=image,
+            image=StringIO.StringIO(ICON.decode('base64')),
             image_margin=4
         )
         self.map.draw_text_on_line(
@@ -141,7 +154,8 @@ class MapTestCase(unittest.TestCase):
             text_halo_line_dash=None,
             text_transform=None,
         )
-        self.map.draw_image((11.2, 45.6), image)
+        self.map.draw_image((11.2, 45.6),
+            StringIO.StringIO(ICON.decode('base64')))
 
 
 def suite():
