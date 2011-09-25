@@ -129,7 +129,6 @@ class Style(object):
         self.attrs[key] = value
 
     def __getattr__(self, name):
-        print name
         if name == 'tags':
             return self.__dict__[name]
         try:
