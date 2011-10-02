@@ -60,7 +60,7 @@ class StyleTestCase(unittest.TestCase):
         self.assertListEqual(self.stylesheet.map_background, [1, 1, 1, 0])
         self.assertListEqual(self.stylesheet.sea_background, [1, 0, 1, 0])
 
-    def test_styles(self):
+    def test_get(self):
         self.assertEqual(
             self.stylesheet.get(0.5, 'point', {'place': 'city'})['font-size'],
             14
@@ -78,6 +78,8 @@ class StyleTestCase(unittest.TestCase):
         self.assertIsNone(self.stylesheet.get(1000, 'line',
             {'highway': 'motorway'}))
         self.assertIsNone(self.stylesheet.get(10, 'line', {'foo': 'bar'}))
+
+    def test_update(self):
         s = self.stylesheet.get(10, 'line', {'highway': 'motorway'})
         s['font-size'] = 15
         self.assertEqual(self.stylesheet.get(10, 'line',
@@ -93,6 +95,9 @@ class StyleTestCase(unittest.TestCase):
             self.stylesheet.get(0.5, 'point', {'place': 'town'})['font-size'],
             15
         )
+
+    def test_iter(self):
+        self.assertEqual(len(list(self.stylesheet.iter_styles(0, 'point'))), 1)
 
 
 def suite():
