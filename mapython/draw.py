@@ -463,7 +463,7 @@ class Map(object):
         #: draw all character paths
         for char in utils.iter_chars_on_line(chars, line, start_len):
             for geom in char.geoms:
-                char_coords = iter(geom.coords)
+                char_coords = iter(geom.exterior.coords)
                 self.context.move_to(*char_coords.next())
                 for lon, lat in char_coords:
                     self.context.line_to(lon, lat)

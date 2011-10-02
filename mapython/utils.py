@@ -3,7 +3,7 @@ import sys
 import math
 import collections
 import cairo
-from shapely.geometry import Point, LineString, MultiLineString, Polygon
+from shapely.geometry import Point, Polygon, MultiPolygon
 from shapely.ops import linemerge
 
 
@@ -173,9 +173,9 @@ def linestring_text_optimal_segment(coords, width, max_rad=4.5):
             midmost = (start, end)
     return midmost
 
-def generate_char_geoms(ctx, text, spacing=0.8, space_width=3):
+def generate_char_geoms(ctx, text, spacing=0.6, space_width=3):
     '''
-    Generates geometries for each character in text. Each character is placed
+    Generates coordinates for each character in text. Each character is placed
     at (0, 0). Additionally the character width and spacing to
     previous character is determined.
 
@@ -184,7 +184,7 @@ def generate_char_geoms(ctx, text, spacing=0.8, space_width=3):
     :param spacing: spacing between characters as int or float
     :param space_width: width of one space character
 
-    :returns: list containing (geometry, width, spacing) tuples
+    :returns: list containing (coordinate tuple, width, spacing) tuples
     '''
 
     ctx.save()
@@ -209,13 +209,13 @@ def generate_char_geoms(ctx, text, spacing=0.8, space_width=3):
             else: # cairo.PATH_MOVE_TO or cairo.PATH_LINE_TO
                 coords.append(point)
         width = ctx.text_extents(char)[2]
-        geoms.append((MultiLineString(paths), width, cur_spacing))
+        geoms.append((paths, width, cur_spacing))
         ctx.new_path()
         cur_spacing = spacing
     ctx.restore()
     return geoms
 
-def iter_chars_on_line(chars, line, start_len, step=0.85):
+def iter_chars_on_line(chars, line, start_len, step=0.6):
     '''
     Yields single character geometries placed on line.
 
@@ -231,8 +231,8 @@ def iter_chars_on_line(chars, line, start_len, step=0.85):
     # make sure first character is not rendered directly at the edge of the line
     cur_len = max(start_len, 1)
     # geometry containing path of all rotated characters
-    text_geom = LineString()
-    for char, width, spacing in chars:
+    text_geom = Polygon()
+    for paths, width, spacing in chars:
         cur_len += spacing
         last_rad = None
         for _ in xrange(30):
@@ -242,22 +242,24 @@ def iter_chars_on_line(chars, line, start_len, step=0.85):
             rad = linestring_char_radians(line, cur_len, width)
             #: only rotate if radians changed
             if rad != last_rad:
-                rot_coords = tuple(tuple(rotate_coords(geom.coords, rad))
-                    for geom in char)
+                rot_coords = tuple(tuple(rotate_coords(geom, rad))
+                    for geom in paths)
             last_rad = rad
             # move rotated char to current position
-            coords = (tuple(translate_coords(c, pos.x, pos.y))
-                for c in rot_coords)
-            rot = MultiLineString(tuple(coords))
-            cur_len += step
+            rot = MultiPolygon(tuple(
+                Polygon(tuple(translate_coords(c, pos.x, pos.y)))
+                for c in rot_coords
+            ))
             # check whether distance to previous characters is long enough
             if (
-                text_geom.distance(rot) > spacing
+                text_geom.distance(rot) >= spacing
                 or text_geom.geom_type == 'GeometryCollection'
             ):
                 text_geom = text_geom.union(rot)
+                cur_len += width
                 yield rot
                 break
+            cur_len += step
 
 def dict2key(d):
     '''
