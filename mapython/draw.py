@@ -425,6 +425,7 @@ class Map(object):
         self.context.new_path()
         #: make sure line does not intersect other conflict objects
         line = LineString(coords)
+        line = self.map_area.intersection(line)
         line = line.difference(self.map_area.exterior.buffer(height))
         line = line.difference(self.conflict_area)
         #: check whether line is empty or is split into several different parts
