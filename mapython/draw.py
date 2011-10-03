@@ -365,10 +365,7 @@ class Map(object):
         area = box(*self.context.path_extents())
         if image is not None:
             area = area.union(image_area)
-        try:
-            self.conflict_union(area)
-        except ValueError: # empty geometry
-            pass
+        self.conflict_union(area)
         #: fill characters with color
         self.context.set_source_rgba(*color)
         self.context.fill()
@@ -591,8 +588,11 @@ class Map(object):
         :param geom: any of :class:`shapely.geometry.*`
         '''
 
-        self.conflict_area = self.conflict_area.union(
-            geom.buffer(margin, 2))
+        try:
+            self.conflict_area = self.conflict_area.union(
+                geom.buffer(margin, 2))
+        except ValueError:
+            pass # empty geom
 
     def conflict_density(self, x, y, radius=60):
         '''
