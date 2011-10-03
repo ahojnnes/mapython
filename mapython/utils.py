@@ -3,7 +3,7 @@ import sys
 import math
 import collections
 import cairo
-from shapely.geometry import Point, Polygon, MultiPolygon
+from shapely.geometry import Point, LineString, Polygon, MultiPolygon
 from shapely.ops import linemerge
 
 
