@@ -392,14 +392,11 @@ def close_coastlines(lines, bbox):
                         or (endangle < math.pi and prevangle > math.pi)
                     )
                 ):
-                    coastlines.append(coastline)
+                    # make sure that coastline is a closed path by converting
+                    # its coordinates to a polygon
+                    yield Polygon(coastline).exterior
                     break
                 else:
                     prevend = Point(bline.coords[-1])
                     coastline.append(bline.coords[-1])
                     blines.rotate(-1)
-    for coastline in coastlines:
-        # make sure that coastline is a closed path by converting its
-        # coordinates to a polygon
-        yield Polygon(coastline).exterior
-
