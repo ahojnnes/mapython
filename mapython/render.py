@@ -22,6 +22,7 @@ COLUMN_ATTRS = ('text', )
 DEFAULT_STYLE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
     'styles/default.yml')
 BBOX_QUERY_COND = "(%s.way && SetSRID('BOX3D(%s %s, %s %s)'::box3d, 4326))"
+TRANSPARENT = (0, 0, 0, 0)
 
 
 class Renderer(object):
@@ -159,11 +160,11 @@ class Renderer(object):
                     exterior=numpy.array(geom.exterior),
                     interiors=tuple(numpy.array(i) for i in geom.interiors),
                     background_color=polygon.style.get('background-color',
-                        (0, 0, 0, 0)),
+                        TRANSPARENT),
                     background_image=background_image,
                     border_width=polygon.style.get('border-width', 0),
                     border_color=polygon.style.get('border-color',
-                        (0, 0, 0, 0)),
+                        TRANSPARENT),
                     border_line_cap=polygon.style.get('border-line-cap',
                         cairo.LINE_CAP_ROUND),
                     border_line_join=polygon.style.get('border-line-join',
@@ -241,11 +242,11 @@ class Renderer(object):
                         coord,
                         radius=point.style.get('circle-radius'),
                         background_color=point.style.get('circle-background-color',
-                            (0, 0, 0, 0)),
+                            TRANSPARENT),
                         background_image=point.style.get('circle-background-image'),
                         border_width=point.style.get('border-width', 0),
                         border_color=point.style.get('border-color',
-                            (0, 0, 0, 0)),
+                            TRANSPARENT),
                         border_line_cap=point.style.get('border-line-cap',
                             cairo.LINE_CAP_ROUND),
                         border_line_join=point.style.get('border-line-join',
@@ -315,7 +316,7 @@ class Renderer(object):
                         cairo.FONT_WEIGHT_NORMAL),
                     text_halo_width=obj.style.get('text-halo-width', 1.5),
                     text_halo_color=obj.style.get('text-halo-color',
-                        (0, 0, 0, 0)),
+                        TRANSPARENT),
                     text_halo_line_cap=obj.style.get('text-halo-line-cap',
                         cairo.LINE_CAP_ROUND),
                     text_halo_line_join=obj.style.get('text-halo-line-join',
