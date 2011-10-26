@@ -18,7 +18,7 @@ ZOOMLEVELS:
     16: [32768, 65536]
     17: [65536, 9999999999999]
 
-MAP_BACKGROUND: 0.94 0.93 0.90
+MAP_BACKGROUND: 0.95 0.94 0.91
 SEA_BACKGROUND: 0.67 0.79 0.89
 
 #: see http://wiki.openstreetmap.org/wiki/Key:TAGNAME
@@ -71,13 +71,13 @@ POINT:
             - 1:
                 font-size: 13
         village:
-            - 1-7:
+            - 1-6:
                 text: name
                 text-color: 0.4 0.4 0.4
                 text-halo-color: 1 1 1 0.88
                 text-halo-width: 1.5
                 font-size: 10
-            - 1-6:
+            - 1-4:
                 font-size: 11
             - 1-2:
                 font-size: 12
@@ -396,12 +396,12 @@ POLYGON:
     building:
         yes:
             - 0-4:
-                background-color: 0.87 0.86 0.83
+                background-color: 0.87 0.86 0.84
                 z-index: 99
 
     landuse:
         allotments, brownfield, cemetery, commercial, construction, garages: &landuse_default
-            - 0, 1, 2:
+            - 0-3:
                 background-color: 0.9 0.9 0.9
         greenfield, greenhouse_horticulture, industrial, landfill, meadow: *landuse_default
         orchard, plant_nursery, quarry, railway: *landuse_default
@@ -419,20 +419,23 @@ POLYGON:
             - all:
                 background-color: 0.76 0.89 0.73
         military:
-            - all:
+            - 0-3:
                 background-color: 0.89 0.89 0.79
         residential:
-            - 0, 1, 2:
-                background-color: 0.94 0.94 0.9
+            - 0-3:
+                background-color: 0.92 0.91 0.89
         village_green, recreation_ground:
-            - all:
+            - 0-3:
                 background-color: 0.7 0.8 0.6
 
     leisure:
         sports_centre, golf_course, stadium, track, pitch:
             - 0-3:
                 background-color: 0.65 0.93 0.85
-        nature_reserve, park, garden, common:
+        common:
+            - 0-3:
+                background-color: 0.82 0.89 0.82
+        nature_reserve, park, garden:
             - all:
                 background-color: 0.82 0.89 0.82
 
@@ -455,7 +458,7 @@ POLYGON:
 
     waterway:
         riverbank:
-            - all:
+            - 0-6:
                 background-color: 0.67 0.79 0.89
                 z-index: 98
 
