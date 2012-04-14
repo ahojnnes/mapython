@@ -75,11 +75,9 @@ class Map(object):
         #: calculate surface size in unit
         if self.x_diff > self.y_diff:
             self.width = self.max_size
-            self.height = int(math.ceil(self.max_size / self.x_diff *
-                                         self.y_diff))
+            self.height = int(math.ceil(self.max_size/self.x_diff*self.y_diff))
         else:
-            self.width = int(math.ceil(self.max_size / self.y_diff *
-                                        self.x_diff))
+            self.width = int(math.ceil(self.max_size/self.y_diff*self.x_diff))
             self.height = self.max_size
         #: init surface object according to surface_type
         if self.SURFACE_TYPES.get(self.surface_type) is not None:
